@@ -1,0 +1,61 @@
+% -------------------------------------------------
+% Packages
+% -------------------------------------------------
+\usepackage{amsmath, amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{bm}
+\usepackage{siunitx}
+\usepackage{listings}
+
+% Figure search paths (relative to tex/lectures/)
+\graphicspath{{../figures/lectures/}{../figures/shared/}}
+
+% -------------------------------------------------
+% Notes (speaker notes)
+% -------------------------------------------------
+\usepackage{pgfpages}
+% Uncomment ONE of these for speaker notes:
+% \setbeameroption{show notes} % notes only (for printing notes)
+% \setbeameroption{show notes on second screen=right} % slides + notes
+
+% -------------------------------------------------
+% TikZ
+% -------------------------------------------------
+\usepackage{tikz}
+\usetikzlibrary{matrix, calc}
+\usepackage{xcolor} % (tikz loads xcolor, but explicit is fine)
+\usetikzlibrary{arrows.meta, decorations.pathreplacing}
+
+
+% -------------------------------------------------
+% Themes
+%--------------------------------------------------
+\usetheme{default}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+% -----------------------------
+% Code formatting
+% -----------------------------
+\definecolor{codegray}{RGB}{245,245,245}
+
+\lstset{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  showstringspaces=false
+}
+
+
+
+
+% --- Shortcuts ---
+%\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\Grad}{\nabla}
+\newcommand{\Div}{\nabla\!\cdot}
+\newcommand{\bx}{\bm{x}}
+\newcommand{\bn}{\bm{n}}
+\newcommand{\bq}{\bm{q}}

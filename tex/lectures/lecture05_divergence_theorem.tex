@@ -1,0 +1,230 @@
+
+\documentclass[aspectratio=169]{beamer}
+
+\input{../preamble/beamer_styles.tex}
+
+\title[Divergence Theorem via 1D Fin]{Divergence Theorem via 1D Heat Conduction\\(Constant Cross Section)}
+\author{MMAE 450}
+\date{\today}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\vect}[1]{\bm{#1}}
+
+\begin{document}
+
+% -------------------- Slide 1 --------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+% -------------------- Slide 2 --------------------
+\begin{frame}{Big Idea}
+\begin{block}{Core principle}
+Local conservation laws, when integrated over a domain, become global balance laws.
+\end{block}
+
+\begin{itemize}
+  \item Boundary view: add what crosses the boundary
+  \item Interior view: add what is created or destroyed inside
+\end{itemize}
+
+\vspace{0.5em}
+These two viewpoints are equivalent.
+\end{frame}
+
+% -------------------- Slide 3 --------------------
+\begin{frame}{1D Fin Model}
+\begin{itemize}
+  \item Fin along \(x \in [0,L]\)
+  \item Constant cross-sectional area \(A\)
+  \item Heat flux \(q(x)\) [W/m\(^2\)]
+  \item Steady state
+  \item No internal heat generation
+\end{itemize}
+
+\begin{block}{Goal}
+Derive the local and global energy balance from first principles.
+\end{block}
+\end{frame}
+
+% -------------------- Slide 4 --------------------
+\begin{frame}{Control Volume in the Fin}
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,>=Latex, font=\small]
+  \def\L{11.0}
+  \def\h{0.5}
+  \def\xa{4.2}
+  \def\xb{6.6}
+
+  % Axis
+  \draw[->, thick] (0,-1.2) -- (\L+0.6,-1.2) node[below] {$x$};
+  \node[below] at (0,-1.2) {$0$};
+  \node[below] at (\L,-1.2) {$L$};
+
+  % Fin
+  \draw[thick] (0,0) rectangle (\L,\h);
+
+  % Control volume
+  \fill[black!10] (\xa,0) rectangle (\xb,\h);
+  \draw[very thick] (\xa,0) -- (\xa,\h);
+  \draw[very thick] (\xb,0) -- (\xb,\h);
+
+  % Labels
+  \draw[thick] (\xa,-1.05) -- (\xa,-1.35);
+  \draw[thick] (\xb,-1.05) -- (\xb,-1.35);
+  \node[below] at (\xa,-1.35) {$x$};
+  \node[below] at (\xb,-1.35) {$x+\Delta x$};
+
+  \draw[decorate, decoration={brace, amplitude=5pt}] (\xa,-1.5) -- (\xb,-1.5)
+    node[midway, below=6pt] {$\Delta x$};
+
+  % Flux arrows
+  \draw[->, thick] (\xa-1.7,0.9) -- (\xa-0.2,0.9);
+  \node[above] at (\xa-0.95,0.9) {$q(x)A$};
+
+  \draw[->, thick] (\xb+0.2,0.9) -- (\xb+1.7,0.9);
+  \node[above] at (\xb+0.95,0.9) {$q(x+\Delta x)A$};
+
+  \node[above] at ({0.5*(\xa+\xb)},1.3) {\textbf{Control volume}};
+\end{tikzpicture}
+\end{frame}
+
+% -------------------- Slide 5 --------------------
+\begin{frame}{Local Energy Balance (No Generation)}
+On the segment \([x, x+\Delta x]\), steady state with no generation:
+\[
+q(x)A - q(x+\Delta x)A = 0
+\]
+
+Divide by \(A\,\Delta x\) and take the limit \(\Delta x \to 0\):
+\[
+\frac{q(x+\Delta x)-q(x)}{\Delta x} = 0
+\quad\Rightarrow\quad
+\frac{dq}{dx} = 0
+\]
+
+\begin{block}{Interpretation}
+The heat flux is spatially constant when no energy is generated.
+\end{block}
+\end{frame}
+
+% -------------------- Slide 6 --------------------
+\begin{frame}{From Local to Global Balance}
+Integrate the local conservation law over \([0,L]\):
+\[
+\int_0^L \frac{dq}{dx}\,dx = 0
+\]
+
+Apply the Fundamental Theorem of Calculus:
+\[
+q(L) - q(0) = 0
+\]
+
+\begin{block}{Boundary heat-rate balance}
+Multiplying by the area gives
+\[
+q(0)A = q(L)A
+\]
+\end{block}
+\end{frame}
+
+% -------------------- Slide 7 --------------------
+\begin{frame}{Local Balance with a Source Term}
+Now include volumetric heat generation \(S(x)\) [W/m\(^3\)].
+
+Energy balance on \([x,x+\Delta x]\):
+\[
+q(x)A - q(x+\Delta x)A + S(x)\,A\,\Delta x = 0
+\]
+
+Divide by \(A\,\Delta x\) and take the limit:
+\[
+-\frac{dq}{dx} + S(x) = 0
+\]
+
+\begin{block}{Local conservation law}
+Divergence of heat flux balances internal generation.
+\end{block}
+\end{frame}
+
+% -------------------- Slide 8 --------------------
+\begin{frame}{Global Balance with Sources}
+Integrate the local equation over \([0,L]\):
+\[
+\int_0^L \left(-\frac{dq}{dx} + S(x)\right)\,dx = 0
+\]
+
+\[
+-\big(q(L)-q(0)\big) + \int_0^L S(x)\,dx = 0
+\]
+
+Multiply by the area:
+\[
+q(0)A - q(L)A + \int_0^L S(x)\,A\,dx = 0
+\]
+
+\begin{block}{Meaning}
+\(\text{in} - \text{out} + \text{generated} = 0\)
+\end{block}
+\end{frame}
+
+% -------------------- Slide 9 --------------------
+\begin{frame}{Divergence Theorem (Heat)}
+In three dimensions, let \(\vect{q}(\vect{x})\) be the heat flux vector.
+
+\[
+-\nabla \cdot \vect{q} + S = 0
+\]
+
+Integrating over a volume \(V\):
+\[
+\int_V \nabla\cdot \vect{q}\,dV
+=
+\int_{\Gamma} \vect{q}\cdot \vect{n}\,dS
+\]
+
+\begin{block}{Key idea}
+Divergence converts surface flux into a volumetric density.
+\end{block}
+\end{frame}
+
+% -------------------- Slide 10 --------------------
+\begin{frame}{Exact Analogy: Stress Divergence}
+Replace heat flux with the Cauchy stress tensor \(\boldsymbol{\sigma}\).
+
+\[
+\int_V \nabla\cdot \boldsymbol{\sigma}\,dV
+=
+\int_{\Gamma} \boldsymbol{\sigma}\vect{n}\,dS
+\]
+
+Linear momentum balance:
+\[
+\nabla\cdot \boldsymbol{\sigma} + \vect{b} = \rho \vect{a}
+\]
+
+\begin{itemize}
+  \item \(\nabla\cdot \boldsymbol{\sigma}\): internal force per unit volume
+  \item \(\vect{b}\): body force density
+\end{itemize}
+
+\begin{block}{One-sentence takeaway}
+Divergence turns boundary interactions into volume forces.
+\end{block}
+\end{frame}
+
+% -------------------- Slide 11 --------------------
+\begin{frame}{Wrap-Up}
+\begin{itemize}
+  \item Start from conservation on an infinitesimal segment
+  \item Divide by volume to obtain a local law
+  \item Integrate to recover the global balance
+  \item Same structure appears in heat, fluids, and solids
+\end{itemize}
+
+\begin{block}{Exit question}
+If \(S=0\), what must be true of the boundary heat fluxes?
+\end{block}
+\end{frame}
+
+\end{document}

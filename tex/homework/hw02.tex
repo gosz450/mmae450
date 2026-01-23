@@ -1,0 +1,127 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\setlength{\parskip}{0.75em}
+\setlength{\parindent}{0pt}
+
+\title{\textbf{MMAE 450 — Homework 2}\\
+Newton’s Method for Nonlinear Systems}
+\author{}
+\date{Due: January 27, 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Objectives}
+
+The objectives of this assignment are to:
+\begin{itemize}[leftmargin=2em]
+  \item Introduce Newton’s method for solving systems of nonlinear equations.
+  \item Reinforce residual-based formulations of governing equations.
+  \item Practice computing Jacobian matrices analytically or symbolically.
+  \item Implement a Newton solver using numerical linear algebra.
+\end{itemize}
+
+This homework emphasizes algorithmic structure and physical interpretation rather than algebraic complexity.
+
+\section*{Problem: Steady-State Nonlinear Heat Balance}
+
+Consider two thermal nodes with unknown temperatures $T_1$ and $T_2$.
+The nodes exchange heat by linear conduction, and node 1 loses heat to the
+environment by thermal radiation.
+
+The steady-state governing equations are given by
+\begin{align}
+R_1(T_1,T_2) &= k\,(T_2 - T_1) + \sigma\,(T_1^4 - T_\infty^4), \label{eq:R1} \\
+R_2(T_1,T_2) &= k\,(T_1 - T_2). \label{eq:R2}
+\end{align}
+
+Here:
+\begin{itemize}[leftmargin=2em]
+  \item $k > 0$ is a conduction coefficient,
+  \item $\sigma > 0$ is a radiation coefficient,
+  \item $T_\infty$ is the ambient temperature.
+\end{itemize}
+
+\subsection*{(a) Residual Formulation}
+
+Write the system \eqref{eq:R1}–\eqref{eq:R2} in vector residual form,
+\[
+\bm{R}(\bm{T}) =
+\begin{bmatrix}
+R_1(T_1,T_2) \\
+R_2(T_1,T_2)
+\end{bmatrix}
+=
+\bm{0},
+\qquad
+\bm{T} =
+\begin{bmatrix}
+T_1 \\
+T_2
+\end{bmatrix}.
+\]
+
+Clearly identify the unknown vector and the residual components.
+
+\subsection*{(b) Jacobian Matrix}
+
+Compute the Jacobian matrix
+\[
+\bm{J}(\bm{T}) = \frac{\partial \bm{R}}{\partial \bm{T}}.
+\]
+
+You may compute the Jacobian:
+\begin{itemize}[leftmargin=2em]
+  \item analytically, or
+  \item using a symbolic tool such as \texttt{SymPy}.
+\end{itemize}
+
+\subsection*{(c) Newton Iteration}
+
+Write the Newton linear system solved at iteration $k$ and the update equation
+for $\bm{T}^{(k+1)}$.
+
+\subsection*{(d) Numerical Solution}
+
+Implement Newton’s method in Python using \textbf{NumPy only} (no symbolic
+operations inside the solver).
+
+Your implementation must:
+\begin{itemize}[leftmargin=2em]
+  \item use a relative residual convergence criterion
+  \[
+  \frac{\|\bm{R}(\bm{T}^{(k)})\|}{\|\bm{R}(\bm{T}^{(0)})\|} < \varepsilon,
+  \]
+  where $\varepsilon$ is a user-prescribed tolerance,
+  \item report the converged solution $(T_1,T_2)$,
+  \item report the number of Newton iterations required.
+\end{itemize}
+
+You may choose reasonable numerical values for $k$, $\sigma$, and $T_\infty$.
+
+\subsection*{(e) Convergence Behavior}
+
+Plot the relative residual norm versus Newton iteration number and comment briefly
+on the observed convergence behavior.
+
+\section*{Submission Instructions}
+
+Submit a single Jupyter notebook (\texttt{.ipynb}) containing:
+\begin{itemize}[leftmargin=2em]
+  \item a clear problem setup,
+  \item residual and Jacobian definitions,
+  \item the Newton solver implementation,
+  \item results and discussion.
+\end{itemize}
+
+Ensure that your notebook is well-organized and clearly documented.
+
+
+
+\end{document}
