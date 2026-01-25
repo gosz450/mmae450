@@ -1,0 +1,213 @@
+
+\documentclass[aspectratio=169]{beamer}
+
+% --- Theme / packages ---
+\input{../preamble/beamer_styles.tex}
+
+
+\title[MMAE 450]{1D Heat Conduction}
+\subtitle{(FTCS Recap and Crank-Nicolson}
+\author{Mike Gosz}
+\institute{MMAE 450}
+\date{}
+
+\begin{document}
+
+
+\begin{frame}{Recap: FTCS for the 1D Heat Equation}
+
+We consider the one-dimensional heat equation
+\[
+\frac{\partial T}{\partial t}
+=
+\alpha \frac{\partial^2 T}{\partial x^2}.
+\]
+
+Using finite differences in space and an explicit time update,
+the \emph{Forward Time, Centered Space (FTCS)} scheme is
+\[
+T_j^{n+1}
+=
+T_j^n
++
+\lambda
+\left(
+T_{j+1}^n - 2T_j^n + T_{j-1}^n
+\right),
+\qquad
+\lambda = \frac{\alpha\,\Delta t}{\Delta x^2}.
+\]
+
+\medskip
+
+\textbf{Key features:}
+\begin{itemize}
+  \item Fully explicit
+  \item Easy to implement
+  \item Conditionally stable
+\end{itemize}
+
+\end{frame}
+%==============================================================
+\begin{frame}{FTCS Stability: What We Know}
+
+For the one-dimensional heat equation, FTCS is stable only if
+\[
+\lambda = \frac{\alpha\,\Delta t}{\Delta x^2} \le \frac{1}{2}.
+\]
+
+\medskip
+
+\textbf{Implications:}
+\begin{itemize}
+  \item Time step is restricted by spatial resolution
+  \item Small $\Delta x$ $\Rightarrow$ very small $\Delta t$
+  \item Long-time simulations can become expensive
+\end{itemize}
+
+\medskip
+
+This motivates the use of \emph{implicit} time integration schemes.
+
+\end{frame}
+%==============================================================
+\begin{frame}{Motivation for Crank--Nicolson}
+
+FTCS evaluates spatial diffusion entirely at time level $n$.
+\medskip
+
+Crank--Nicolson evaluates diffusion at the \emph{midpoint in time}:
+\[
+\frac{T^{n+1} - T^n}{\Delta t}
+=
+\alpha
+\frac{1}{2}
+\left(
+\frac{\partial^2 T^{n+1}}{\partial x^2}
++
+\frac{\partial^2 T^n}{\partial x^2}
+\right).
+\]
+
+\medskip
+
+\textbf{Interpretation:}
+\begin{itemize}
+  \item Average of explicit and implicit diffusion
+  \item Second-order accurate in time
+  \item Improved stability properties
+\end{itemize}
+
+\end{frame}
+%==============================================================
+\begin{frame}{Crank--Nicolson: Discrete Form}
+
+Using centered finite differences in space, we obtain
+\[
+T_j^{n+1}
+-
+\frac{\lambda}{2}
+\left(
+T_{j+1}^{n+1} - 2T_j^{n+1} + T_{j-1}^{n+1}
+\right)
+=
+T_j^{n}
++
+\frac{\lambda}{2}
+\left(
+T_{j+1}^{n} - 2T_j^{n} + T_{j-1}^{n}
+\right).
+\]
+
+\medskip
+
+Unlike FTCS, all unknown temperatures at time level $n+1$
+appear on the \emph{left-hand side}.
+
+\medskip
+
+This leads to a linear system that must be solved at each time step.
+
+\end{frame}
+%==============================================================
+\begin{frame}{Crank--Nicolson as a Linear System}
+
+At each time step, we solve
+\[
+\mathbf{A}\,\mathbf{T}^{n+1} = \mathbf{d}.
+\]
+
+\medskip
+
+The coefficient matrix $\mathbf{A}$ has a special structure:
+\[
+\mathbf{A}
+=
+\begin{bmatrix}
+b_1 & c_1 &        &        & 0 \\
+a_2 & b_2 & c_2    &        &   \\
+    & a_3 & b_3    & c_3    &   \\
+    &     & \ddots & \ddots & \ddots \\
+0   &     &        & a_N    & b_N
+\end{bmatrix}.
+\]
+
+\medskip
+
+This is called a \emph{tridiagonal} matrix.
+
+\end{frame}
+%==============================================================
+\begin{frame}{Structure of the Linear System}
+
+The Crank--Nicolson system has the form
+\[
+\begin{bmatrix}
+\color{blue}{b_1} & \color{red}{c_1} &                &                & 0 \\
+\color{green}{a_2} & \color{blue}{b_2} & \color{red}{c_2} &                &   \\
+                   & \color{green}{a_3} & \color{blue}{b_3} & \color{red}{c_3} &   \\
+                   &                   & \ddots & \ddots & \ddots \\
+0                  &                   &        & \color{green}{a_N} & \color{blue}{b_N}
+\end{bmatrix}
+\begin{bmatrix}
+T_1^{n+1} \\ T_2^{n+1} \\ \vdots \\ T_N^{n+1}
+\end{bmatrix}
+=
+\begin{bmatrix}
+d_1 \\ d_2 \\ \vdots \\ d_N
+\end{bmatrix}.
+\]
+
+\medskip
+
+\begin{itemize}
+  \item \textcolor{green}{Lower diagonal}: $a_i$
+  \item \textcolor{blue}{Main diagonal}: $b_i$
+  \item \textcolor{red}{Upper diagonal}: $c_i$
+\end{itemize}
+
+\end{frame}
+%==============================================================
+\begin{frame}{Looking Ahead}
+
+\begin{itemize}
+  \item Crank--Nicolson is unconditionally stable for linear diffusion
+  \item Each time step requires solving a tridiagonal system
+  \item The special matrix structure enables very efficient solvers
+\end{itemize}
+
+\medskip
+
+\textbf{Coming next:}
+\begin{itemize}
+  \item Efficient solution of tridiagonal systems
+  \item Implementation details in Python
+  \item Comparison of FTCS and Crank--Nicolson on real problems
+\end{itemize}
+
+\end{frame}
+
+%==============================================================
+
+
+\end{document}

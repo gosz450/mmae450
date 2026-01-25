@@ -15,7 +15,9 @@ lecture02_taylor_series_1D \
 lecture03_nonlinear_systems_2D \
 lecture04_newtons_method_nonlinear_sytems \
 lecture05_divergence_theorem \
-lecture06_1D_heat_conduction_ftcs
+lecture06_1D_heat_conduction_ftcs \
+lecture07_1D_heat_conduction_ftcs_bcs \
+lecture08_1D_heat_conduction_cn \
 
 PDFS = $(addprefix $(BUILD_DIR)/, $(addsuffix .pdf, $(LECTURES)))
 
@@ -55,6 +57,8 @@ sync: lectures
 	@cp -f $(BUILD_DIR)/lecture04_newtons_method_nonlinear_sytems.pdf ../modules/module02_newtons_method_nonlinear_systems/slides/lecture04.pdf
 	@cp -f $(BUILD_DIR)/lecture05_divergence_theorem.pdf         ../modules/module03_1D_heat_conduction/slides/lecture05.pdf
 	@cp -f $(BUILD_DIR)/lecture06_1D_heat_conduction_ftcs.pdf    ../modules/module03_1D_heat_conduction/slides/lecture06.pdf
+	@cp -f $(BUILD_DIR)/lecture07_1D_heat_conduction_ftcs_bcs.pdf    ../modules/module03_1D_heat_conduction/slides/lecture07.pdf
+	@cp -f $(BUILD_DIR)/lecture08_1D_heat_conduction_cn.pdf    ../modules/module03_1D_heat_conduction/slides/lecture08.pdf
 	@echo "==> Done."
 
 # Help

@@ -1,0 +1,199 @@
+
+\documentclass[aspectratio=169]{beamer}
+
+% --- Theme / packages ---
+\input{../preamble/beamer_styles.tex}
+\usepackage{tikz}
+
+\usetikzlibrary{arrows.meta,decorations.pathmorphing}
+
+
+\title[MMAE 450]{Heat Conduction: From Balance Law to FTCS}
+\subtitle{(Boundary Conditions)}
+\author{Mike Gosz}
+\institute{MMAE 450}
+\date{}
+
+\begin{document}
+
+% -------------------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% -------------------------
+\begin{frame}{Boundary Conditions for the Cooling Sphere HW3}
+
+We solve the radially symmetric heat equation in a sphere:
+\[
+\frac{\partial T}{\partial t}
+=
+\alpha\left[\frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial T}{\partial r}\right)\right],
+\qquad 0<r<R.
+\]
+
+\medskip
+
+Two boundary conditions are required:
+\begin{itemize}
+  \item \textbf{Center symmetry (Neumann):}
+  \[
+  \left.\frac{\partial T}{\partial r}\right|_{r=0}=0
+  \quad\Longleftrightarrow\quad
+  q_r(0,t)=0.
+  \]
+  \item \textbf{Surface convection (Robin):}
+  \[
+  -k\left.\frac{\partial T}{\partial r}\right|_{r=R}
+  =
+  h\left(T(R,t)-T_\infty\right).
+  \]
+\end{itemize}
+
+\end{frame}
+% -------------------------
+\begin{frame}{Neumann BC at $r=0$ via a Balance Law (Center Control Volume)}
+
+Consider a small spherical control volume around the origin,
+with radius $\Delta r/2$.
+
+\[
+\rho c_p V\,\frac{\mathrm{d}T_0}{\mathrm{d}t} = -qA,
+\]
+where $q$ is the outward heat flux at $r=\Delta r/2$.
+
+\medskip
+
+Geometry:
+\[
+V=\frac{4}{3}\pi\left(\frac{\Delta r}{2}\right)^3,
+\qquad
+A=4\pi\left(\frac{\Delta r}{2}\right)^2.
+\]
+
+Approximate the conductive flux across the boundary:
+\[
+q \approx -k\,\frac{T_1-T_0}{\Delta r}.
+\]
+
+\end{frame}
+
+\begin{frame}{Neuman BC at $r=0$: Conduction Balances Convection}
+Substitute and simplify:
+\[
+\frac{\mathrm{d}T_0}{\mathrm{d}t}
+=
+6\alpha\,\frac{T_1-T_0}{\Delta r^2}.
+\]
+
+Forward Euler in time gives the \textbf{center update}:
+\[
+T_0^{n+1} = T_0^n + 6\lambda\left(T_1^n - T_0^n\right),
+\qquad
+\lambda=\frac{\alpha\Delta t}{\Delta r^2}.
+\]
+
+\end{frame}
+% -------------------------
+\begin{frame}{Robin BC at $r=R$: Conduction Balances Convection}
+
+At the surface, the boundary condition is
+\[
+-k\left.\frac{\partial T}{\partial r}\right|_{r=R}
+=
+h\left(T(R,t)-T_\infty\right).
+\]
+
+\medskip
+
+Interpretation:
+\begin{itemize}
+  \item $-k\,\partial T/\partial r$ is the \textbf{conductive heat flux leaving the solid}
+  \item $h(T-T_\infty)$ is the \textbf{convective heat flux into the air}
+\end{itemize}
+
+\medskip
+
+This is a \textbf{Robin (mixed) boundary condition} because it couples:
+\[
+\text{temperature at the boundary} \quad \text{and} \quad \text{temperature gradient at the boundary}.
+\]
+
+\medskip
+
+In a finite difference method, we enforce this condition at each time step
+to determine the surface behavior.
+
+\end{frame}
+% -------------------------
+\begin{frame}{Robin BC Implementation: Ghost Node at the Surface}
+
+Approximate the surface derivative using a centered difference:
+\[
+\left.\frac{\partial T}{\partial r}\right|_{r=R}
+\approx
+\frac{T_{N+1}^n - T_{N-1}^n}{2\Delta r}.
+\]
+
+Insert into the Robin condition:
+\[
+-k\,\frac{T_{N+1}^n - T_{N-1}^n}{2\Delta r}
+=
+h\left(T_N^n - T_\infty\right).
+\]
+
+Solve for the ghost value $T_{N+1}^n$:
+\[
+\boxed{
+T_{N+1}^n
+=
+T_{N-1}^n
+-
+2\Delta r\,\frac{h}{k}\left(T_N^n - T_\infty\right).
+}
+\]
+
+\medskip
+
+Then the surface node update uses the same stencil as interior nodes,
+with $T_{N+1}^n$ substituted where $T_{N+1}$ appears.
+
+\end{frame}
+% -------------------------
+\begin{frame}{Summary: How We Enforce Boundary Conditions}
+
+\begin{itemize}
+  \item \textbf{Center ($r=0$), Neumann / symmetry:}
+  \[
+  T_0^{n+1} = T_0^n + 6\lambda\left(T_1^n - T_0^n\right).
+  \]
+  \item \textbf{Surface ($r=R$), Robin / convection:}
+  \[
+  -k\left.\frac{\partial T}{\partial r}\right|_{r=R}
+  =
+  h\left(T_N - T_\infty\right),
+  \qquad
+  T_{N+1}^n
+=
+T_{N-1}^n
+-
+2\Delta r\,\frac{h}{k}\left(T_N^n - T_\infty\right).
+  \]
+  \item \textbf{Interior ($i=1,\dots,N-1$):} use the standard spherical FTCS stencil.
+\end{itemize}
+
+\medskip
+\textbf{Takeaway:} boundary conditions are enforced \emph{at every time step}, and they
+determine the updates at nodes where the standard interior stencil does not apply.
+
+\end{frame}
+% -------------------------
+
+% -------------------------
+
+% -------------------------
+
+% -------------------------
+
+
+\end{document}
