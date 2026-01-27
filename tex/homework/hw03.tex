@@ -7,6 +7,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{tikz}
+\usepackage{booktabs}
 
 \usetikzlibrary{arrows.meta,decorations.pathmorphing}
 
@@ -45,68 +46,66 @@
 \vspace{0.9em}
 
 % =====================================================================
-\section*{Problem 1: Code Verification on a 1D Rod (Dirichlet--Dirichlet)}
+\section*{Homework 3: FTCS for the 1D Heat Equation}
 
-Before tackling the spherical cooling problem, you will verify your FTCS implementation on the
-\emph{1D Cartesian heat equation}:
-\begin{equation}
-\pd{T}{t} = \alpha \pd{}{x}\!\left(\pd{T}{x}\right) = \alpha \frac{\partial^2 T}{\partial x^2},
-\qquad 0<x<L,\ t>0.
-\end{equation}
+\subsection*{Problem 1: 1D Transient Heat Conduction with Zero-Flux Boundary}
 
-Use the following setup:
-\[
-L=\SI{0.10}{m},\qquad T_\mathrm{L}=\SI{100}{^\circ C},\qquad T_\mathrm{R}=\SI{20}{^\circ C}.
-\]
-Initial condition:
-\[
-T(x,0)=\SI{100}{^\circ C}.
-\]
-Boundary conditions (Dirichlet at both ends):
-\[
-T(0,t)=T_\mathrm{L},\qquad T(L,t)=T_\mathrm{R}.
-\]
+Consider a one-dimensional rod of length $L$ governed by the transient heat equation
+\begin{equation*}
+\frac{\partial T}{\partial t} = \alpha \frac{\partial^2 T}{\partial x^2}, \qquad 0 < x < L, \quad t > 0.
+\end{equation*}
+%
+The rod is initially at a uniform temperature $T_0$. The boundary and initial conditions are:
 
-\subsection*{Material data}
-Use copper properties throughout this assignment:
-\[
-k=\SI{401}{W/(m\cdot K)},\qquad
-\rho=\SI{8960}{kg/m^3},\qquad
-c_p=\SI{385}{J/(kg\cdot K)},\qquad
-\alpha=\frac{k}{\rho c_p}.
-\]
-
-\subsection*{Tasks}
-\begin{enumerate}
-  \item Discretize the rod with $N+1$ nodes and $\Delta x=L/N$. Implement FTCS for the interior nodes:
+\begin{itemize}
+  \item \textbf{Left end (symmetry / zero flux):}
   \[
-  T_i^{n+1}
-  =
-  T_i^n + \lambda\left(T_{i+1}^n - 2T_i^n + T_{i-1}^n\right),
-  \qquad
-  \lambda=\frac{\alpha\,\Delta t}{\Delta x^2},
-  \qquad i=1,\dots,N-1.
+  -k\left.\frac{\partial T}{\partial x}\right|_{x=0} = 0.
   \]
-  Enforce the Dirichlet boundary values at \emph{every} time step.
-  \item Choose at least three time steps $\Delta t$ (equivalently, three values of $\lambda$) including:
-  \begin{itemize}
-    \item one that is clearly stable,
-    \item one that is close to the stability limit,
-    \item one that is unstable.
-  \end{itemize}
-  \item For each run, plot:
-  \begin{itemize}
-    \item $T(x,t)$ profiles at several times,
-    \item $T$ at the midpoint vs.\ time.
-  \end{itemize}
-  \item In 2--3 sentences, describe what you observe as $\Delta t$ increases (stability vs.\ accuracy).
+
+  \item \textbf{Right end (Dirichlet):}
+  \[
+  T(L,t) = T_L.
+  \]
+
+  \item \textbf{Initial condition:}
+  \[
+  T(x,0) = T_0.
+  \]
+\end{itemize}
+\medskip
+%
+\subsection*{Problem Parameters}
+
+\begin{center}
+\begin{tabular}{l c l}
+\toprule
+\textbf{Quantity} & \textbf{Symbol} & \textbf{Value} \\
+\midrule
+Rod length                & $L$        & $1.0~\mathrm{m}$ \\
+Initial temperature       & $T_0$      & $100~^\circ\mathrm{C}$ \\
+Right-end temperature     & $T_L$      & $20~^\circ\mathrm{C}$ \\
+Thermal conductivity      & $k$        & $401~\mathrm{W/(m\cdot K)}$ \\
+Density                   & $\rho$     & $8960~\mathrm{kg/m^3}$ \\
+Specific heat             & $c_p$      & $385~\mathrm{J/(kg\cdot K)}$ \\
+Thermal diffusivity       & $\alpha$   & $\dfrac{k}{\rho c_p}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\pagebreak
+\noindent\textbf{Tasks:}
+\begin{enumerate}
+\item Discretize the governing equation using the Forward Time, Centered Space (FTCS) method on a uniform spatial grid.
+\item Derive the finite-difference update equation for the interior nodes.
+\item Derive the FTCS update equation at the left boundary using the zero-flux condition.
+\item Implement the method in Python and simulate the transient temperature evolution.
+\item Plot the midpoint temperature $T(L/2,t)$ versus time for $0<t<5000\,\mathrm{s}$ and comment on the transient behavior.
 \end{enumerate}
 
-\hrule
-\vspace{0.9em}
+
 
 % =====================================================================
-\section*{Problem 2: Cooling of a Copper Sphere (Neumann at Center, Convection at Surface)}
+\section*{Problem 2: Cooling of a Copper Sphere (Regularity at Center, Convection at Surface)}
 
 A solid copper sphere of radius $R=\SI{0.10}{m}$ is initially at a uniform temperature
 $T_0=\SI{100}{^\circ C}$. At time $t=0$ the sphere is removed from an oven and exposed to still air at
@@ -185,14 +184,13 @@ Assume:
 \subsection*{Material properties and convection data}
 \begin{table}[h!]
 \centering
-\begin{tabular}{l c c}
+\begin{tabular}{l c l}
 \hline
 \textbf{Property} & \textbf{Symbol} & \textbf{Value} \\
 \hline
 Thermal conductivity & $k$ & $\SI{401}{W/(m\cdot K)}$ \\
 Density               & $\rho$ & $\SI{8960}{kg/m^3}$ \\
 Specific heat capacity & $c_p$ & $\SI{385}{J/(kg\cdot K)}$ \\
-\hline
 Convective heat transfer coefficient (air) & $h$ & $\SI{10}{W/(m^2\cdot K)}$ \\
 \hline
 \end{tabular}
@@ -206,25 +204,27 @@ The thermal diffusivity is
 \subsection*{Governing equation and conditions (given)}
 
 With radial symmetry, the transient heat equation in spherical coordinates is
-\begin{equation}
+\begin{equation*}
 \pd{T}{t}
 =
 \alpha\left[\frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\pd{T}{r}\right)\right],
 \qquad 0<r<R,\ t>0.
 \label{eq:sphere-heat}
-\end{equation}
+\end{equation*}
 
-Boundary conditions:
-\begin{align}
-\left.\pd{T}{r}\right|_{r=0} &= 0 \qquad \text{(symmetry / zero flux at the center)}, \label{eq:bc-center}\\[4pt]
--k \left.\pd{T}{r}\right|_{r=R} &= h\left(T(R,t)-T_\infty\right) \qquad \text{(convection at the surface)}.
+\noindent\textbf{Boundary condition at the surface:}
+\begin{equation*}
+-k \left.\pd{T}{r}\right|_{r=R} = h\left(T(R,t)-T_\infty\right)
+\qquad \text{(convection at the surface)}.
 \label{eq:bc-conv}
-\end{align}
-Initial condition:
-\begin{equation}
-T(r,0)=T_0.
-\label{eq:ic}
-\end{equation}
+\end{equation*}
+
+\noindent\textbf{Regularity condition at the center:}
+\begin{equation*}
+T(r,t)\ \text{remains bounded as}\ r\to 0
+\qquad \text{(finite temperature at the origin)}.
+\label{eq:center-regularity}
+\end{equation*}
 
 \subsection*{Tasks}
 \begin{enumerate}
@@ -234,7 +234,7 @@ T(r,0)=T_0.
   \]
   \item Implement FTCS time stepping for the sphere. Your implementation must:
   \begin{itemize}
-    \item enforce the \textbf{Neumann (zero flux)} condition at $r=0$ (use the \emph{center control-volume balance law} from lecture),
+    \item enforce the \textbf{regularity condition} at $r=0$ (bounded temperature at the origin) using the \emph{center control-volume balance law} from lecture,
     \item enforce the \textbf{Robin (convection)} condition at $r=R$ (e.g.\ via a ghost-node relation or an equivalent one-sided discretization),
     \item update only the interior nodes with the spherical FTCS stencil.
   \end{itemize}
@@ -244,40 +244,10 @@ T(r,0)=T_0.
     \item a run near the stability limit,
     \item an unstable run (nonphysical oscillations or blow-up).
   \end{itemize}
-  \item For your \emph{best stable} run, produce:
-  \begin{itemize}
-    \item $T(r,t)$ profiles at several times,
-    \item $T(0,t)$ (center temperature) vs.\ time,
-    \item $T(R,t)$ (surface temperature) vs.\ time.
-  \end{itemize}
-  \item Define ``near steady state'' as the time $t^\star$ when the center temperature satisfies
-  \[
-  T(0,t^\star)-T_\infty \le 0.01\,(T_0-T_\infty).
-  \]
-  Estimate $t^\star$ and report it with appropriate units.
+  \item For your \emph{best stable} run, plot the center temperature $T(0,t)$ as a function of time over a \emph{reasonable} time interval (long enough to observe a noticeable decrease toward $T_\infty$). State the final simulation time used.
 \end{enumerate}
 
 % =====================================================================
-\section*{Submission Requirements}
-Submit \textbf{one PDF report} and \textbf{one code archive} (or a single Jupyter notebook) containing:
-\begin{itemize}
-  \item brief descriptions of your discretization and boundary-condition enforcement,
-  \item plots requested in Problems 1 and 2,
-  \item a short discussion of stability vs.\ accuracy for FTCS,
-\end{itemize}
 
-\section*{Grading (10 points total)}
-\begin{itemize}
-  \item (3) Problem 1: FTCS implementation with Dirichlet--Dirichlet and stability exploration
-  \item (5) Problem 2: FTCS for the sphere (Neumann at center, convection at surface) with correct BC handling and plots
-  \item (2) Discussion + reported $Bi$ and $t^\star$ (clear, physically consistent)
-\end{itemize}
-
-\bigskip
-\noindent\textbf{Notes.}
-\begin{itemize}
-  \item Enforce boundary conditions at \emph{every} time step.
-  \item When you label a run ``unstable,'' describe the evidence (oscillations, blow-up, temperatures below $T_\infty$, etc.).
-\end{itemize}
 
 \end{document}

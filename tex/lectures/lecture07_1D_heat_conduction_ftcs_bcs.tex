@@ -20,6 +20,168 @@
 \begin{frame}
   \titlepage
 \end{frame}
+% ------------------------------------------------------------
+% Slides: Neumann (flux) BC at x=0 for 1D heat equation (Cartesian)
+% ------------------------------------------------------------
+
+\begin{frame}{1D Heat Equation (Cartesian) and a Prescribed Flux at $x=0$}
+We consider the 1D heat equation on $0<x<L$:
+\[
+\frac{\partial T}{\partial t}=\alpha\,\frac{\partial^2 T}{\partial x^2},
+\qquad \alpha=\frac{k}{\rho c_p}.
+\]
+
+\medskip
+
+A prescribed (time-dependent) heat flux at the left boundary:
+\[
+q(0,t) \equiv -k\left.\frac{\partial T}{\partial x}\right|_{x=0} = g(t).
+\]
+
+\medskip
+\begin{itemize}
+\item $g(t)>0$ means \emph{heat enters} the domain at $x=0$ (inward flux).
+\item $g(t)=0$ corresponds to an insulated boundary.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Finite Difference Grid and Notation}
+Uniform grid:
+\[
+x_j=j\,\Delta x,\qquad j=0,1,\dots,N,\qquad \Delta x=\frac{L}{N}.
+\]
+
+\medskip
+
+Discrete temperatures:
+\[
+T_j^n \approx T(x_j,t^n),\qquad t^n=n\,\Delta t.
+\]
+
+\medskip
+
+Define the diffusion number:
+\[
+\lambda=\frac{\alpha\,\Delta t}{\Delta x^2}.
+\]
+
+\medskip
+
+Interior FTCS update ($j=1,\dots,N-1$):
+\[
+T_j^{n+1}=T_j^n+\lambda\left(T_{j+1}^n-2T_j^n+T_{j-1}^n\right).
+\]
+
+\end{frame}
+
+
+\begin{frame}{Imposing a Prescribed Flux at $x=0$: From Flux to Gradient}
+The boundary condition is specified as a \emph{flux}:
+\[
+-k\left.\frac{\partial T}{\partial x}\right|_{x=0}=g(t).
+\]
+
+\medskip
+
+Convert to a prescribed gradient:
+\[
+\left.\frac{\partial T}{\partial x}\right|_{x=0}=-\frac{g(t)}{k}.
+\]
+
+\medskip
+
+At time level $n$, define
+\[
+\gamma^n \equiv \left.\frac{\partial T}{\partial x}\right|_{x=0,t=t^n}
+= -\frac{g(t^n)}{k}.
+\]
+
+\end{frame}
+
+
+\begin{frame}{Taylor-Series Boundary Update at $j=0$ (Second-Order Accurate)}
+Taylor expansion from node $0$ to node $1$:
+\[
+T_1^n
+=
+T_0^n
++
+\Delta x\,\gamma^n
++
+\frac{\Delta x^2}{2}\left.T_{xx}\right|_{0}^n
++\mathcal{O}(\Delta x^3).
+\]
+
+\medskip
+
+Solve for the boundary curvature:
+\[
+\left.T_{xx}\right|_{0}^n
+\approx
+\frac{2}{\Delta x^2}\left(T_1^n-T_0^n-\Delta x\,\gamma^n\right).
+\]
+
+\medskip
+
+Use the heat equation at $x=0$:
+\[
+\frac{dT_0}{dt}=\alpha \left.T_{xx}\right|_{0}.
+\]
+
+Forward Euler in time gives the boundary node update:
+\[
+\boxed{
+T_0^{n+1}
+=
+T_0^n
++
+2\lambda\left(T_1^n-T_0^n-\Delta x\,\gamma^n\right)
+}
+\qquad
+\left(\gamma^n=-\frac{g(t^n)}{k}\right).
+\]
+
+\end{frame}
+
+
+
+\begin{frame}{Algorithm Summary (FTCS with Prescribed Flux at $x=0$)}
+At each time step $n\to n+1$:
+
+\begin{enumerate}
+\item Evaluate the prescribed flux $g(t^n)$ and compute
+\[
+\gamma^n = -\frac{g(t^n)}{k}.
+\]
+\item Update the left boundary node ($j=0$):
+\[
+T_0^{n+1}
+=
+T_0^n
++
+2\lambda\left(T_1^n-T_0^n-\Delta x\,\gamma^n\right).
+\]
+\item Update interior nodes ($j=1,\dots,N-1$):
+\[
+T_j^{n+1}=T_j^n+\lambda\left(T_{j+1}^n-2T_j^n+T_{j-1}^n\right).
+\]
+\item Enforce the right boundary condition at $x=L$ (Dirichlet or Robin), as given.
+\end{enumerate}
+
+\end{frame}
+% -------------------------
+
+% -------------------------
+
+% -------------------------
+
+% -------------------------
+
+% -------------------------
+
+% -------------------------
 
 % -------------------------
 \begin{frame}{Boundary Conditions for the Cooling Sphere HW3}
