@@ -59,6 +59,7 @@ sync: lectures
 	@cp -f $(BUILD_DIR)/lecture06_1D_heat_conduction_ftcs.pdf    ../modules/module03_1D_heat_conduction/slides/lecture06.pdf
 	@cp -f $(BUILD_DIR)/lecture07_1D_heat_conduction_ftcs_bcs.pdf    ../modules/module03_1D_heat_conduction/slides/lecture07.pdf
 	@cp -f $(BUILD_DIR)/lecture08_1D_heat_conduction_cn.pdf    ../modules/module03_1D_heat_conduction/slides/lecture08.pdf
+	@cp -f $(BUILD_DIR)/lecture09_2D_heat_conduction.pdf    ../modules/module04_2D_heat_conduction_wave_propagation/slides/lecture09.pdf
 	@echo "==> Done."
 
 # Help
