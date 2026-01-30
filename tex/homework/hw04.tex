@@ -16,13 +16,60 @@
 
 \title{\vspace{-1.0em}\textbf{MMAE 450 --- Homework 04: 2D Transient Heat Conduction in a Plate}}
 \author{}
-\date{\vspace{-1.0em}\textbf{Due: Wednesday, February 4, 2026 (11:59 pm)}}
+\date{\vspace{-1.0em}\textbf{Due: Tuesday 10, 2026 (11:59 pm)}}
 
 \begin{document}
 \maketitle
 
 %=========================================================
 \section*{Problem: Transient Cooling of a Heated Patch in a Rectangular Plate (Dirichlet BCs)}
+
+\begin{center}
+\begin{tikzpicture}[x=10cm,y=10cm,>=Latex]
+  % Domain dimensions (scaled to 1 by 0.5)
+  \def\Lx{1.0}
+  \def\Ly{0.5}
+
+  % Patch bounds
+  \def\xa{0.45}
+  \def\xb{0.55}
+  \def\ya{0.20}
+  \def\yb{0.30}
+
+  % Draw plate
+  \draw[thick] (0,0) rectangle (\Lx,\Ly);
+
+  % Shade patch
+  \fill[pattern=north east lines] (\xa,\ya) rectangle (\xb,\yb);
+  \draw[thick] (\xa,\ya) rectangle (\xb,\yb);
+
+  % Axes
+  \draw[->] (-0.08,0) -- (1.08,0) node[below] {$x$};
+  \draw[->] (0,-0.08) -- (0,0.62) node[left] {$y$};
+
+  % Dimension labels
+  \draw[<->] (0,-0.06) -- (\Lx,-0.06) node[midway,below] {$L_x=\SI{1.0}{m}$};
+  \draw[<->] (-0.06,0) -- (-0.06,\Ly) node[midway,left] {$L_y=\SI{0.5}{m}$};
+
+  % Patch labels
+  \node[anchor=west] at (0.62,0.38) {\small Heated patch: $T=100$};
+  \node[anchor=west] at (0.62,0.34) {\small elsewhere: $T=0$};
+
+  % Patch coordinate callouts
+  \draw[dashed] (\xa,0) -- (\xa,\ya);
+  \draw[dashed] (\xb,0) -- (\xb,\ya);
+  \draw[dashed] (0,\ya) -- (\xa,\ya);
+  \draw[dashed] (0,\yb) -- (\xa,\yb);
+
+    %\node[below] at (\xa,0) {\scriptsize $x=0.45$};
+   % \node[below] at (\xb,0) {\scriptsize $x=0.55$};
+    %\node[left] at (0,\ya) {\scriptsize $y=0.20$};
+    %\node[left] at (0,\yb) {\scriptsize $y=0.30$};
+
+\end{tikzpicture}
+\end{center}
+
+\noindent
 A thin rectangular plate occupies the domain
 \[
 0 \le x \le L_x,\qquad 0 \le y \le L_y,
@@ -65,55 +112,9 @@ T(x,y,0)=
 \end{cases}
 \]
 
-\subsection*{Geometry and initial condition sketch}
-\begin{center}
-\begin{tikzpicture}[x=10cm,y=10cm,>=Latex]
-  % Domain dimensions (scaled to 1 by 0.5)
-  \def\Lx{1.0}
-  \def\Ly{0.5}
-
-  % Patch bounds
-  \def\xa{0.45}
-  \def\xb{0.55}
-  \def\ya{0.20}
-  \def\yb{0.30}
-
-  % Draw plate
-  \draw[thick] (0,0) rectangle (\Lx,\Ly);
-
-  % Shade patch
-  \fill[pattern=north east lines] (\xa,\ya) rectangle (\xb,\yb);
-  \draw[thick] (\xa,\ya) rectangle (\xb,\yb);
-
-  % Axes
-  \draw[->] (-0.08,0) -- (1.08,0) node[below] {$x$};
-  \draw[->] (0,-0.08) -- (0,0.62) node[left] {$y$};
-
-  % Dimension labels
-  \draw[<->] (0,-0.06) -- (\Lx,-0.06) node[midway,below] {$L_x=\SI{1.0}{m}$};
-  \draw[<->] (-0.06,0) -- (-0.06,\Ly) node[midway,left] {$L_y=\SI{0.5}{m}$};
-
-  % Patch labels
-  \node[anchor=west] at (0.62,0.38) {\small Heated patch: $T=100$};
-  \node[anchor=west] at (0.62,0.34) {\small elsewhere: $T=0$};
-
-  % Patch coordinate callouts
-  \draw[dashed] (\xa,0) -- (\xa,\ya);
-  \draw[dashed] (\xb,0) -- (\xb,\ya);
-  \draw[dashed] (0,\ya) -- (\xa,\ya);
-  \draw[dashed] (0,\yb) -- (\xa,\yb);
-
-  \node[below] at (\xa,0) {\scriptsize $x=0.45$};
-  \node[below] at (\xb,0) {\scriptsize $x=0.55$};
-  \node[left] at (0,\ya) {\scriptsize $y=0.20$};
-  \node[left] at (0,\yb) {\scriptsize $y=0.30$};
-
-\end{tikzpicture}
-\end{center}
-
 %=========================================================
 \section*{Numerical method requirement: FTCS}
-Use an FTCS discretization of \eqref{eq:heat2d} on the uniform grid:
+Use an FTCS discretization of the heat equation on the uniform grid:
 \begin{equation}
 T_{i,j}^{n+1}
 =
@@ -138,14 +139,13 @@ Choose a ``safe'' $\Delta t$ (e.g.\ some fraction of the maximum stable value) a
 
 %=========================================================
 \section*{Deliverables}
-Submit \textbf{(i)} a short PDF summary (1--2 pages) and \textbf{(ii)} a Jupyter notebook (\texttt{.ipynb}) that reproduces all results.
+Submit a Jupyter notebook (\texttt{.ipynb}) that reproduces all results.
 
 \begin{enumerate}
   \item \textbf{Grid and time step.}
-  Report $\Delta x$, $\Delta y$, your chosen $\Delta t$, and verify \eqref{eq:stability} numerically.
-
+  Report $\Delta x$, $\Delta y$, your chosen $\Delta t$, and verify that your chosen grid spacing and time step satisfy the stability condition.
   \item \textbf{Contour plots.}
-  Produce filled contour plots of $T(x,y,t)$ at the following times:
+  Produce contour plots of $T(x,y,t)$ at the following times:
   \[
   t \in \{0,\ 10,\ 50,\ 200\}\ \text{s}.
   \]
@@ -158,7 +158,7 @@ Submit \textbf{(i)} a short PDF summary (1--2 pages) and \textbf{(ii)} a Jupyter
   \item \textbf{Maximum temperature decay.}
   Compute and plot
   \[
-    T_{\max}(t)=\max_{(x,y)\in\Omega} T(x,y,t)
+   T_{\max}(t) = \max \left\{ T(x,y,t) \right\}
   \]
   versus time.
 
@@ -177,14 +177,5 @@ Submit \textbf{(i)} a short PDF summary (1--2 pages) and \textbf{(ii)} a Jupyter
     \quad \text{and confirm}\quad \eta\le \frac{1}{2}.
   \]
 \end{itemize}
-
 %=========================================================
-\section*{Optional extension (extra credit)}
-Implement a fully implicit method (Backward Euler or Crank--Nicolson) in 2D and solve the linear system at each time step using Gauss--Seidel (or SOR). Compare:
-\begin{itemize}
-  \item allowable time steps,
-  \item runtime,
-  \item accuracy of the temperature histories.
-\end{itemize}
-
 \end{document}

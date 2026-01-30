@@ -18,6 +18,9 @@ lecture05_divergence_theorem \
 lecture06_1D_heat_conduction_ftcs \
 lecture07_1D_heat_conduction_ftcs_bcs \
 lecture08_1D_heat_conduction_cn \
+lecture09_2D_heat_conduction \
+lecture10_2D_indexing \
+lecture11_stability_von_neumann \
 
 PDFS = $(addprefix $(BUILD_DIR)/, $(addsuffix .pdf, $(LECTURES)))
 
@@ -60,6 +63,8 @@ sync: lectures
 	@cp -f $(BUILD_DIR)/lecture07_1D_heat_conduction_ftcs_bcs.pdf    ../modules/module03_1D_heat_conduction/slides/lecture07.pdf
 	@cp -f $(BUILD_DIR)/lecture08_1D_heat_conduction_cn.pdf    ../modules/module03_1D_heat_conduction/slides/lecture08.pdf
 	@cp -f $(BUILD_DIR)/lecture09_2D_heat_conduction.pdf    ../modules/module04_2D_heat_conduction_wave_propagation/slides/lecture09.pdf
+	@cp -f $(BUILD_DIR)/lecture10_2D_indexing.pdf    ../modules/module04_2D_heat_conduction_wave_propagation/slides/lecture10.pdf
+	@cp -f $(BUILD_DIR)/lecture11_stability_von_neumann.pdf    ../modules/module04_2D_heat_conduction_wave_propagation/slides/lecture11.pdf
 	@echo "==> Done."
 
 # Help
