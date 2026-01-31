@@ -49,9 +49,6 @@
   showstringspaces=false
 }
 
-
-
-
 % --- Shortcuts ---
 %\newcommand{\dd}{\,\mathrm{d}}
 \newcommand{\Grad}{\nabla}
@@ -59,3 +56,123 @@
 \newcommand{\bx}{\bm{x}}
 \newcommand{\bn}{\bm{n}}
 \newcommand{\bq}{\bm{q}}
+
+%==========================
+% Flipbook macro (put in preamble or before frames)
+%==========================
+\newcommand{\GSFlipFrame}[2]{%
+\begin{frame}{Gauss--Seidel sweep (current point $(#1,#2)$)}
+\centering
+\hspace{3.5cm}
+\vspace{3cm}
+\begin{tikzpicture}[scale=2.2, every node/.style={font=\small}]
+  % -----------------------------
+  % USER SETTINGS
+  % -----------------------------
+  \def\Nx{6}   % i = 0..Nx-1
+  \def\Ny{4}   % j = 0..Ny-1
+
+  % current stencil location (interior)
+  \def\ci{#1}
+  \def\cj{#2}
+
+  % Point spacing
+  \def\s{0.85}
+
+  % -----------------------------
+  % STYLES
+  % -----------------------------
+  \tikzset{
+    gpG/.style={circle, fill=green!70!black, inner sep=1.1pt},
+    gpR/.style={circle, fill=red!75!black,   inner sep=1.1pt},
+    gpbG/.style={circle, fill=green!70!black, inner sep=1.5pt},
+    gpbR/.style={circle, fill=red!75!black,   inner sep=1.5pt},
+    gpc/.style={circle, fill=blue, inner sep=1.7pt},
+    stline/.style={dashed, thick},
+    labij/.style={font=\normalsize},
+    labp/.style={font=\scriptsize, text=gray!70},
+  }
+
+  % -----------------------------
+  % OUTER RECTANGLE (domain)
+  % -----------------------------
+  \draw[thick] (0,0) rectangle ({(\Nx-1)*\s},{(\Ny-1)*\s});
+
+  % -----------------------------
+  % GRID POINTS + LABELS
+  % -----------------------------
+  \foreach \j in {0,...,\numexpr\Ny-1\relax} {
+    \foreach \i in {0,...,\numexpr\Nx-1\relax} {
+
+      \pgfmathsetmacro{\x}{\i*\s}
+      \pgfmathsetmacro{\y}{\j*\s}
+
+      % global index p = i + j*Nx (as in your first figure)
+      \pgfmathtruncatemacro{\p}{\i + \j*\Nx}
+
+      % boundary?
+      \pgfmathtruncatemacro{\isB}{ (\i==0) || (\i==\Nx-1) || (\j==0) || (\j==\Ny-1) }
+      % current center?
+      \pgfmathtruncatemacro{\isC}{ (\i==\ci) && (\j==\cj) }
+
+      % "already updated" (GS ordering): j<cj OR (j==cj and i<ci)
+      \pgfmathtruncatemacro{\isUpdated}{ (\j<\cj) || ((\j==\cj) && (\i<\ci)) }
+
+      % FORCE left boundary (i==0) and bottom boundary (j==0) to be green
+      \pgfmathtruncatemacro{\forceGreen}{ \isB }
+
+      % decide color state:
+      % - center: blue
+      % - else green if forced green OR updated
+      % - else red
+      \ifnum\isC=1
+        \node[gpc] (P\i\j) at (\x,\y) {};
+      \else
+        \pgfmathtruncatemacro{\isGreen}{ (\forceGreen==1) || (\isUpdated==1) }
+        \ifnum\isB=1
+          \ifnum\isGreen=1
+            \node[gpbG] (P\i\j) at (\x,\y) {};
+          \else
+            \node[gpbR] (P\i\j) at (\x,\y) {};
+          \fi
+        \else
+          \ifnum\isGreen=1
+            \node[gpG] (P\i\j) at (\x,\y) {};
+          \else
+            \node[gpR] (P\i\j) at (\x,\y) {};
+          \fi
+        \fi
+      \fi
+
+      % Labels (i,j) above-right; p below-right
+      \node[labij, anchor=south west] at (\x+0.05,\y+0.05) {$(\i,\j)$};
+      \node[labp,  anchor=north west] at (\x+0.05,\y-0.05) {$\p$};
+    }
+  }
+
+  % -----------------------------
+  % 5-POINT STENCIL (dashed)
+  % -----------------------------
+  \pgfmathsetmacro{\xc}{\ci*\s}
+  \pgfmathsetmacro{\yc}{\cj*\s}
+
+  \draw[stline] (\xc,\yc) -- ({(\ci+1)*\s},\yc);
+  \draw[stline] (\xc,\yc) -- ({(\ci-1)*\s},\yc);
+  \draw[stline] (\xc,\yc) -- (\xc,{(\cj+1)*\s});
+  \draw[stline] (\xc,\yc) -- (\xc,{(\cj-1)*\s});
+
+  % Mapping note
+  %\node[font=\scriptsize, align=left] at ({(1)*\s+1.65},{(0)*\s-0.55})
+  %{$p = i + j\,N_x$};
+\end{tikzpicture}
+\end{frame}%
+}
+
+
+
+
+
+
+
+
+
