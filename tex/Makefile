@@ -21,6 +21,7 @@ lecture08_1D_heat_conduction_cn \
 lecture09_2D_heat_conduction \
 lecture10_2D_indexing \
 lecture11_stability_von_neumann \
+lecture12_wave_equation_1D \
 
 PDFS = $(addprefix $(BUILD_DIR)/, $(addsuffix .pdf, $(LECTURES)))
 
@@ -65,6 +66,7 @@ sync: lectures
 	@cp -f $(BUILD_DIR)/lecture09_2D_heat_conduction.pdf    ../modules/module04_2D_heat_conduction_wave_propagation/slides/lecture09.pdf
 	@cp -f $(BUILD_DIR)/lecture10_2D_indexing.pdf    ../modules/module04_2D_heat_conduction_wave_propagation/slides/lecture10.pdf
 	@cp -f $(BUILD_DIR)/lecture11_stability_von_neumann.pdf    ../modules/module04_2D_heat_conduction_wave_propagation/slides/lecture11.pdf
+	@cp -f $(BUILD_DIR)/lecture12_wave_equation_1D.pdf    ../modules/module04_2D_heat_conduction_wave_propagation/slides/lecture12.pdf
 	@echo "==> Done."
 
 # Help

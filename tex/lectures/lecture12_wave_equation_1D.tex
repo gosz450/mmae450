@@ -1,0 +1,526 @@
+
+\documentclass[aspectratio=169]{beamer}
+
+% --- Theme / packages ---
+\input{../preamble/beamer_styles.tex}
+
+\title{1D Wave Equation}
+\subtitle{Derivation, Finite Differences, and Stability}
+\author{MMAE 450}
+\date{}
+
+\begin{document}
+
+
+\tikzset{
+  vectorArrow/.style={
+    thick,
+    ->,
+    >=Latex
+  }
+ }
+ 
+ \tikzset{
+  axisArrow/.style={
+    thin,
+    ->,
+    >=Stealth
+  }
+}
+
+% ==========================================================
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ==========================================================
+\begin{frame}{Physical model: axial waves in a slender bar}
+\centering
+\begin{tikzpicture}[scale=0.85]
+  % Geometry
+  \def\L{10.0}
+  \def\H{0.6}
+  \def\clampPad{0.4}
+
+  % Bar
+  \draw[fill=gray!5, axisLine] (0,-\H/2) rectangle (\L,\H/2);
+
+  % Clamp at x=0
+  \path[fill=gray!55] (0,-\H/2-\clampPad) rectangle (0,\H/2+\clampPad);
+  \draw[axisLine]     (0,-\H/2-\clampPad) rectangle (0,\H/2+\clampPad);
+  \foreach \y in {-0.5,-0.3,...,0.5}{
+    \draw[axisLine] (0,\y) -- (-0.35,\y-0.25);
+  }
+  \node[figureLabel, below=2pt, inner sep=1pt] at (0,-\H/2-\clampPad) {$x=0$ (fixed)};
+
+  % Traction at x=L (compressive to the left)
+  \draw[vectorArrow] (\L+0.85,0) -- (\L+0.05,0);
+  \node[figureLabel, above, inner sep=1pt] at (\L+0.45,0.22) {$\sigma_0$};
+  \node[figureLabel, below=2pt, inner sep=1pt] at (\L,-\H/2-\clampPad) {$x=L$};
+
+  % x-axis
+  \draw[axisArrow] (0,-1.6) -- (\L+0.8,-1.6);
+  \node[axisLabel, right, inner sep=1pt] at (\L+0.8,-1.6) {$x$};
+
+  % Displacement label
+  \node[figureLabel] at (5,1.0) {axial displacement $u(x,t)$};
+\end{tikzpicture}
+
+\vspace{0.2cm}
+\begin{block}{Assumptions}
+\begin{itemize}
+  \item No body force; constant area $A$ and density $\rho$
+  \item Linear elasticity: $\sigma = E\,\varepsilon$, with $\varepsilon = \dfrac{\mathrm{d}u}{\mathrm{d}x}$
+  \item Small displacement gradients: $|\dfrac{\mathrm{d}u}{\mathrm{d}x}| \ll 1$ (geometric linearization)
+\end{itemize}
+\end{block}
+\end{frame}
+
+% ==========================================================
+\begin{frame}
+\centering
+{\Large Derivation of the 1D wave equation}
+
+\vspace{1em}
+
+\begin{tikzpicture}[x=1cm,y=1cm,scale=1.0]
+  \def\dx{3.0}
+  \def\h{0.8}
+
+  % differential slice
+  \draw[thick, fill=gray!20] (0,0) rectangle (\dx,\h);
+  
+  % face locations
+  \draw[thin] (0,0) -- (0,-0.45);
+  \draw[thin] (\dx,0) -- (\dx,-0.45);
+  \node[below] at (0,-0.45) {$x$};
+  \node[below] at (\dx+.2,-0.45) {$x+\Delta x$};
+
+  % x-axis
+  \draw[axisArrow] (-0.3,-1.05) -- (\dx+0.8,-1.05)
+    node[right] {$x$};
+
+  % forces on faces
+  \draw[vectorArrow] (0,0.5*\h) -- (-1.0,0.5*\h)
+    node[midway,above, xshift=-4mm] {$A\,\sigma(x,t)$};
+
+  \draw[vectorArrow] (\dx,0.5*\h) -- (\dx+1.0,0.5*\h)
+        node[midway,above,xshift=8mm] {$A\,\sigma(x+\Delta x,t)$};
+
+  % dx label
+  \draw[<->,thin] (0,-0.25) -- (\dx,-0.25);
+  \node[below] at (0.5*\dx,-0.25) {$\Delta x$};
+
+\end{tikzpicture}
+
+\vspace{0.75em}
+
+\begin{itemize}
+  \item Axial stress acts on each face of the slice
+  \item Force on a face is $A\,\sigma(x,t)$
+  \item Mass of the slice is $\rho A\,\Delta x$
+\end{itemize}
+\end{frame}
+% ==========================================================
+\begin{frame}
+\centering
+{\Large Derivation of the 1D wave equation}
+
+\vspace{1em}
+
+\begin{block}{Linear momentum balance (Newton's 2nd law)}
+\[
+A\,\sigma(x+\Delta x,t)-A\,\sigma(x,t)
+=
+\rho A\,\Delta x\,\frac{\partial^2u}{\partial t^2}
+\]
+
+Divide through by $A\Delta x$ and take limit as $\Delta x \rightarrow 0$.
+
+\[
+\frac{\partial\sigma}{\partial x} = \rho \frac{\partial^2u}{\partial x^2}
+\]
+\end{block}
+
+
+\begin{block}{Constitutive law + kinematics (small strain)}
+\[
+\varepsilon = \frac{\partial u}{\partial x},
+\qquad
+\sigma = E\,\varepsilon = E\,\frac{\partial u}{\partial x}
+\]
+
+\[
+\frac{\partial \sigma}{\partial x}
+=
+E\,\frac{\partial^2u}{\partial x^2}
+\]
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+\begin{block}{1D wave equation}
+\[
+\frac{\partial^2u}{\partial t^2}
+=
+c^2\,\frac{\partial^2u}{\partial x^2},
+\qquad
+c=\sqrt{\frac{E}{\rho}}
+\]
+
+The parameter $c$ is the \emph{wave speed}
+\end{block}
+\end{frame}
+
+
+
+
+
+
+
+%===============================================
+\begin{frame}{Finite differences: grid and discrete operators}
+
+Uniform mesh:
+\[
+x_j = j\,\Delta x,
+\qquad
+t^n = n\,\Delta t,
+\qquad
+u_j^n \approx u(x_j,t^n)
+\]
+
+\begin{block}{Second derivatives (centered)}
+\[
+\frac{\partial^2 u}{\partial t^2}(x_j,t^n)
+\;\approx\;
+\frac{u_j^{\,n+1}-2u_j^{\,n}+u_j^{\,n-1}}{\Delta t^2}
+\]
+
+\[
+\frac{\partial^2 u}{\partial x^2}(x_j,t^n)
+\;\approx\;
+\frac{u_{j+1}^{\,n}-2u_j^{\,n}+u_{j-1}^{\,n}}{\Delta x^2}
+\]
+\end{block}
+
+Define the Courant number (wave CFL):
+\[
+r \equiv \frac{c\,\Delta t}{\Delta x}.
+\]
+
+\end{frame}
+
+% ==========================================================
+\begin{frame}{Finite differences: explicit update (central in time and space)}
+Start from $u_{tt}=c^2u_{xx}$ at $(x_j,t^n)$ and substitute the centered formulas:
+
+\[
+\frac{u_j^{n+1}-2u_j^{n}+u_j^{n-1}}{\Delta t^2}
+=
+c^2
+\frac{u_{j+1}^{n}-2u_{j}^{n}+u_{j-1}^{n}}{\Delta x^2}
+\]
+
+\begin{block}{Explicit time-marching scheme (CTCS)}
+\[
+\boxed{
+u_j^{n+1}
+=
+2u_j^{n}-u_j^{n-1}
++
+r^2\left(u_{j+1}^{n}-2u_{j}^{n}+u_{j-1}^{n}\right)
+}
+\]
+\end{block}
+
+
+\end{frame}
+
+% ==========================================================
+
+\begin{frame}{Boundary conditions: displacement and stress}
+
+\begin{block}{Dirichlet (prescribed displacement)}
+At a boundary where the displacement is specified, e.g. at $x=0$:
+\[
+u(0,t) = u^*(t)
+\]
+
+On the grid, this is enforced \emph{strongly} at every time step:
+\[
+u_0^{\,n} = u^*(t^n)
+\]
+
+\begin{itemize}
+  \item No update equation is used at this node
+  \item The boundary value is imposed directly
+  \item Interior updates use this known value
+\end{itemize}
+\end{block}
+
+\end{frame}
+%==================================================
+\begin{frame}{Neumann boundary condition via Taylor expansion}
+
+\begin{block}{Taylor expansion about the boundary $x=0$}
+At a fixed time $t$, expand $u(x,t)$ about $x=0$:
+\[
+u(\Delta x,t)
+=
+u(0,t)
++
+\Delta x\,\frac{\partial u}{\partial x}(0,t)
++
+\frac{\Delta x^2}{2}\,
+\frac{\partial^2 u}{\partial x^2}(0,t)
++
+\mathcal{O}(\Delta x^3)
+\]
+
+Impose the Neumann condition (zero stress / zero slope):
+\[
+\frac{\partial u}{\partial x}(0,t)=0
+\]
+
+Solve for the second derivative:
+\[
+\frac{\partial^2 u}{\partial x^2}(0,t)
+\;\approx\;
+\frac{2\big(u(\Delta x,t)-u(0,t)\big)}{\Delta x^2}
+\]
+\end{block}
+
+\end{frame}
+%=========================================
+\begin{frame}
+\begin{block}{Boundary update equation}
+On the grid:
+\[
+\frac{\partial^2 u}{\partial x^2}(0,t^n)
+\;\approx\;
+\frac{2\big(u_1^{\,n}-u_0^{\,n}\big)}{\Delta x^2}
+\]
+
+Use the centered time discretization:
+\[
+\frac{\partial^2 u}{\partial t^2}(0,t^n)
+\;\approx\;
+\frac{u_0^{\,n+1}-2u_0^{\,n}+u_0^{\,n-1}}{\Delta t^2}
+\]
+
+Substitute into $u_{tt}=c^2u_{xx}$ to obtain:
+\[
+\boxed{
+u_0^{\,n+1}
+=
+2u_0^{\,n}-u_0^{\,n-1}
++
+2r^2\big(u_1^{\,n}-u_0^{\,n}\big)
+}
+\]
+\[
+r=\frac{c\,\Delta t}{\Delta x}
+\]
+\end{block}
+
+\end{frame}
+
+%===============================================
+
+\begin{frame}{Von Neumann stability: Fourier mode substitution}
+
+Assume a Fourier mode on an infinite / periodic grid:
+\[
+u_j^n = A^n e^{i\theta j},
+\qquad \theta\in[0,\pi].
+\]
+
+Substitute into the explicit update:
+\[
+A^{n+1}e^{i\theta j}
+=
+2A^{n}e^{i\theta j}-A^{n-1}e^{i\theta j}
++
+r^2A^{n}\!\left(e^{i\theta (j+1)}-2e^{i\theta j}+e^{i\theta (j-1)}\right).
+\]
+
+\begin{block}{Divide through and simplify}
+Divide by $A^{n-1}e^{i\theta j}$:
+\[
+\frac{A^{n+1}}{A^{n-1}}
+=
+2\frac{A^{n}}{A^{n-1}}
+-
+1
++
+r^2\frac{A^{n}}{A^{n-1}}
+\left(e^{i\theta}-2+e^{-i\theta}\right).
+\]
+\end{block}
+\end{frame}
+%----------------------------------------------
+\begin{frame}
+
+\begin{block}
+
+Use
+\[
+e^{i\theta}-2+e^{-i\theta}=-4\sin^2\!\frac{\theta}{2},
+\]
+to obtain
+\[
+\frac{A^{n+1}}{A^{n-1}}
+-
+2\!\left(1-2r^2\sin^2\frac{\theta}{2}\right)
+\frac{A^{n}}{A^{n-1}}
++
+1
+=
+0.
+\]
+\end{block}
+
+\begin{block}{Amplification factor}
+Define
+\[
+G \;\equiv\; \frac{A^{n}}{A^{n-1}}.
+\]
+Then the quadratic becomes
+\[
+G^2
+-
+2\!\left(1-2r^2\sin^2\frac{\theta}{2}\right)G
++
+1
+=
+0.
+\]
+\end{block}
+\end{frame}
+
+
+
+
+%===============================================
+\begin{frame}{Roots of the characteristic equation}
+
+Define
+\[
+a(\theta)\;\equiv\;1-2r^2\sin^2\!\frac{\theta}{2}.
+\]
+
+Then the amplification factor satisfies
+\[
+G^2 - 2a(\theta)\,G + 1 = 0,
+\]
+with roots
+\[
+G_{1,2} = a \pm \sqrt{a^2-1}.
+\]
+
+\begin{block}{Key fact}
+The constant term is $+1$, so
+\[
+G_1G_2 = 1.
+\]
+\end{block}
+
+\end{frame}
+%===============================================
+\begin{frame}{Stable case: complex roots (bounded oscillations)}
+
+\begin{block}{When do we get complex roots?}
+If
+\[
+a^2-1 \le 0
+\qquad\Longleftrightarrow\qquad
+|a|\le 1,
+\]
+then the roots are complex conjugates:
+\[
+G_{1,2} = a \pm i\sqrt{1-a^2}.
+\]
+\end{block}
+
+\begin{block}{Magnitude of the roots}
+\[
+|G_{1,2}|^2 = a^2 + (1-a^2)=1
+\qquad\Longrightarrow\qquad
+|G_{1}|=|G_{2}|=1.
+\]
+So each Fourier mode is bounded in time (no growth).
+\end{block}
+
+\end{frame}
+%===============================================
+\begin{frame}{Unstable case: real roots (blow-up)}
+
+\begin{alertblock}{When are the roots real?}
+If
+\[
+a^2-1>0,
+\]
+then $G_{1,2}$ are real.
+\end{alertblock}
+
+\begin{block}{Why that implies blow-up}
+Because
+\[
+G_1G_2=1,
+\]
+it is impossible for both real roots to satisfy $|G|\le 1$
+unless $|G_1|=|G_2|=1$ (which occurs only at the boundary case $a=\pm1$).
+
+Therefore, when $a^2-1>0$ one root must satisfy
+\[
+|G|>1,
+\]
+and that Fourier component grows exponentially with $n$.
+\end{block}
+
+\end{frame}
+%===============================================
+\begin{frame}{CFL stability condition for the wave equation}
+
+We require stability for \emph{all} Fourier modes $\theta\in[0,\pi]$:
+\[
+|a(\theta)| \le 1,
+\qquad
+a(\theta)=1-2r^2\sin^2\!\frac{\theta}{2}.
+\]
+
+\begin{block}{Upper bound is automatic}
+Since $\sin^2(\theta/2)\ge 0$,
+\[
+a(\theta)\le 1 \quad\text{always.}
+\]
+\end{block}
+
+\begin{block}{Lower bound gives the restriction}
+The smallest value occurs at $\sin^2(\theta/2)=1$ (i.e., $\theta=\pi$):
+\[
+a_{\min}=1-2r^2.
+\]
+Require $a_{\min}\ge -1$:
+\[
+1-2r^2 \ge -1
+\quad\Longrightarrow\quad
+r^2\le 1
+\quad\Longrightarrow\quad
+\boxed{\,r=\frac{c\,\Delta t}{\Delta x}\le 1\,}.
+\]
+\end{block}
+
+\end{frame}
+%===============================================
+
+%===============================================
+
+
+% ==========================================================
+
+% ==========================================================
+
+\end{document}
