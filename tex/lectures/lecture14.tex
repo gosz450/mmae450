@@ -1,0 +1,119 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{physics}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\title{Balance Laws}
+\subtitle{Important Quantities with Units}
+%\author{Mike Gosz}
+\date{}
+
+\begin{document}
+
+% ------------------------------------------------------------
+\begin{frame}
+  
+%========================================================
+% Table 1: Fields + fluxes + sources in balance laws
+%========================================================
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{lll}
+\hline
+\textbf{Symbol} & \textbf{Description} & \textbf{SI Units} \\
+\hline
+
+$\rho$ & Mass density & $\mathrm{kg/m^3}$ \\
+$\mathbf{v}$ & Velocity vector & $\mathrm{m/s}$ \\
+$\rho \mathbf{v}$ & Momentum per unit volume & $\mathrm{kg/(m^2\,s)}$ \\
+
+$\boldsymbol{\sigma}$ & Cauchy stress tensor & $N/m^2$ \\
+$\boldsymbol{\sigma}\mathbf{n}$ & Traction vector on a surface & $\mathrm{N/m^2}$ \\
+
+$\mathbf{b}$ & Body force per unit mass (e.g., gravity) & $\mathrm{m/s^2}$ \\
+$\rho \mathbf{b}$ & Body force per unit volume & $\mathrm{N/m^3}$ \\
+
+$\mathbf{q}$ & Heat flux vector & $\mathrm{W/m^2}$ \\
+$S$ & Volumetric heat source (heat generation rate) & $\mathrm{W/m^3}$ \\
+
+\hline
+\end{tabular}
+\caption{Common fields, fluxes, and sources appearing in mass, momentum, and energy balance laws.}
+\label{tab:balance_symbols_fluxes_sources}
+\end{table}
+
+\end{frame}
+
+\begin{frame}
+%========================================================
+% Table 2: Energy variables + constitutive/thermal properties
+%========================================================
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{lll}
+\hline
+\textbf{Symbol} & \textbf{Description} & \textbf{SI Units} \\
+\hline
+
+$T$ & Temperature & $\mathrm{K}$ \\
+$e$ & Internal energy per unit mass & $\mathrm{J/kg}$ \\
+$E$ & Total energy per unit mass $\left(E=e+\frac{1}{2}\mathbf{v}\cdot\mathbf{v}\right)$ & $\mathrm{J/kg}$ \\
+$\rho e$ & Internal energy per unit volume & $\mathrm{J/m^3}$ \\
+$\rho E$ & Total energy per unit volume & $\mathrm{J/m^3}$ \\
+
+$k$ & Thermal conductivity & $\mathrm{W/(m\,K)}$ \\
+$c_p$ & Specific heat at constant pressure & $\mathrm{J/(kg\,K)}$ \\
+$c_v$ & Specific heat at constant volume & $\mathrm{J/(kg\,K)}$ \\
+
+\hline
+\end{tabular}
+\caption{Energy variables and common thermal material properties used in the energy equation.}
+\label{tab:energy_symbols_properties}
+\end{table}
+
+
+\end{frame}
+
+
+\begin{frame}
+
+%========================================================
+% Table 3: Operators and Derived Quantities
+%========================================================
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{lll}
+\hline
+\textbf{Symbol} & \textbf{Description} & \textbf{SI Units} \\
+\hline
+
+$\nabla$ & Gradient operator & $\mathrm{1/m}$ \\
+
+$\nabla \cdot \mathbf{v}$ & Velocity divergence & $\mathrm{1/s}$ \\
+
+$\nabla \cdot (\rho \mathbf{v})$ & Mass flux divergence & $\mathrm{kg/(m^3\,s)}$ \\
+
+$\nabla \cdot \boldsymbol{\sigma}$ & Stress divergence (force density) & $\mathrm{N/m^3}$ \\
+
+$\nabla \cdot \mathbf{q}$ & Heat flux divergence & $\mathrm{W/m^3}$ \\
+
+$\rho \mathbf{v} \otimes \mathbf{v}$ & Momentum flux tensor & $\mathrm{kg/(m\,s^2)}$ \\
+
+$\boldsymbol{\sigma}\mathbf{v}$ & Mechanical power flux & $\mathrm{W/m^2}$ \\
+
+\hline
+\end{tabular}
+\caption{Differential operators and commonly appearing derived quantities in balance laws.}
+\label{tab:operators_derived_balance}
+\end{table}
+
+\end{frame}
+
+\end{document}
