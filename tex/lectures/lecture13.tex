@@ -1,0 +1,411 @@
+\documentclass[aspectratio=169]{beamer}
+
+% -------------------------------------------------
+% MMAE 450 – Lecture: Indicial Notation & Balance Laws
+% Date: 2/10/2026
+% Starting draft (TikZ figures can be inserted later)
+% -------------------------------------------------
+
+\usepackage{amsmath,amssymb,bm}
+\usepackage{physics}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+
+\graphicspath{{../figures/lectures/}}
+
+
+\title[MMAE 450]{Indicial Notation, Material Derivative, and Balance Laws}
+%\author{M. R. Gosz}
+\date{}
+
+% -------------------------------------------------
+\begin{document}
+
+% -------------------------------------------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Outline (if time allows)}
+\begin{itemize}
+  \item Why indicial notation?
+  \item Common operators in component form
+  \item Material time derivative
+  \item Balance laws: mass, momentum, energy
+  \item Advection--diffusion equation
+  \item Reduction to 1D
+\end{itemize}
+\end{frame}
+
+% =================================================
+\section{Indicial Notation}
+% =================================================
+
+% -------------------------------------------------
+\begin{frame}{Why Indicial Notation?}
+\begin{itemize}
+  \item Compact representation of vector/tensor equations
+  \item Eliminates ambiguity in differentiation
+  \item Essential for deriving and implementing balance laws
+  \item Natural bridge to component-based numerical methods
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Basic Conventions}
+\begin{block}{Index notation rules}
+\begin{itemize}
+  \item Indices: $i,j,k = 1,2,3$
+  \item Repeated indices imply summation (Einstein convention)
+  \item Free indices must match on both sides of an equation
+\end{itemize}
+\end{block}
+
+\begin{block}{Examples}
+\[
+\mathbf{v} = v_i\,\mathbf{e}_i,
+\qquad
+\mathbf{a}\cdot\mathbf{b} = a_i b_i
+\]
+\end{block}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Vectors in a Cartesian Basis}
+Write vectors in terms of components and Cartesian base vectors:
+\[
+\mathbf{a} = a_i\,\mathbf{e}_i,
+\qquad
+\mathbf{b} = b_j\,\mathbf{e}_j
+\]
+\begin{itemize}
+  \item $\mathbf{e}_i$ are orthonormal Cartesian base vectors
+  \item Components $a_i, b_j$ are scalars
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Dot Product in Index Form}
+Start from the basis expansion:
+\[
+\mathbf{a}\cdot\mathbf{b}
+= (a_i\mathbf{e}_i)\cdot(b_j\mathbf{e}_j)
+= a_i b_j\,(\mathbf{e}_i\cdot\mathbf{e}_j)
+\]
+For Cartesian base vectors,
+\[
+\mathbf{e}_i\cdot\mathbf{e}_j = \delta_{ij}
+\]
+so
+\[
+\mathbf{a}\cdot\mathbf{b}
+= a_i b_j \delta_{ij}
+= a_i b_i.
+\]
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Second-Order Tensors in a Cartesian Basis}
+Represent a second-order tensor using dyads:
+\[
+\boldsymbol{\sigma} = \sigma_{ij}\,(\mathbf{e}_i\otimes\mathbf{e}_j)
+\]
+\begin{itemize}
+  \item $\sigma_{ij}$ are the tensor components
+  \item $(\mathbf{e}_i\otimes\mathbf{e}_j)\mathbf{v} = \mathbf{e}_i(\mathbf{e}_j\cdot\mathbf{v})$
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Traction: $\boldsymbol{\sigma}\cdot\mathbf{n}$ in Components}
+Let
+\[
+\mathbf{n} = n_k\,\mathbf{e}_k,
+\qquad
+\boldsymbol{\sigma} = \sigma_{ij}(\mathbf{e}_i\otimes\mathbf{e}_j).
+\]
+Then the traction vector is
+\[
+\boldsymbol{\sigma}\cdot\mathbf{n}
+= \sigma_{ij}(\mathbf{e}_i\otimes\mathbf{e}_j)\cdot(n_k\mathbf{e}_k)
+= \sigma_{ij}n_k\,\mathbf{e}_i(\mathbf{e}_j\cdot\mathbf{e}_k).
+\]
+Using $\mathbf{e}_j\cdot\mathbf{e}_k=\delta_{jk}$,
+\[
+\boldsymbol{\sigma}\cdot\mathbf{n}
+= \sigma_{ij}n_k\,\delta_{jk}\,\mathbf{e}_i
+= (\sigma_{ij}n_j)\,\mathbf{e}_i.
+\]
+So, in components:
+\[
+(\boldsymbol{\sigma}\cdot\mathbf{n})_i = \sigma_{ij}n_j.
+\]
+\end{frame}
+
+
+% =================================================
+\section{Operators in Component Form}
+% =================================================
+
+% -------------------------------------------------
+\begin{frame}{$\nabla\cdot\boldsymbol{\sigma}$ in a Cartesian Basis}
+Write the gradient operator and stress tensor in a Cartesian basis:
+\[
+\nabla = \mathbf{e}_j\,\frac{\partial}{\partial x_j},
+\qquad
+\boldsymbol{\sigma} = \sigma_{ij}\,(\mathbf{e}_i\otimes\mathbf{e}_j).
+\]
+Then
+\[
+\nabla\cdot\boldsymbol{\sigma}
+=
+\left(\mathbf{e}_j\frac{\partial}{\partial x_j}\right)\cdot
+\left(\sigma_{ik}\,\mathbf{e}_i\otimes\mathbf{e}_k\right).
+\]
+Use the identity $\mathbf{e}_j\cdot(\mathbf{e}_i\otimes\mathbf{e}_k)=\delta_{ji}\,\mathbf{e}_k$ to obtain
+\[
+\nabla\cdot\boldsymbol{\sigma}
+=
+\frac{\partial \sigma_{ik}}{\partial x_j}\,\delta_{ji}\,\mathbf{e}_k
+=
+\left(\frac{\partial \sigma_{ij}}{\partial x_j}\right)\mathbf{e}_i.
+\]
+So, in components:
+\[
+(\nabla\cdot\boldsymbol{\sigma})_i = \frac{\partial \sigma_{ij}}{\partial x_j}.
+\]
+\end{frame}
+
+
+% -------------------------------------------------
+\begin{frame}{$\boldsymbol{\sigma}\cdot\mathbf{n}$}
+\[
+(\boldsymbol{\sigma}\cdot\mathbf{n})_i = \sigma_{ij} n_j
+\]
+
+\begin{itemize}
+  \item Traction vector on a surface
+  \item Boundary term in momentum and energy balances
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{$\nabla \mathbf{v}$}
+\[
+(\nabla \mathbf{v})_{ij} = \frac{\partial v_i}{\partial x_j}
+\]
+
+\begin{itemize}
+  \item Velocity gradient tensor
+  \item Encodes strain rates and rotation
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{$\nabla^2 T$}
+\[
+\nabla^2 T = \frac{\partial^2 T}{\partial x_j \partial x_j}
+\]
+
+\begin{itemize}
+  \item Scalar Laplacian
+  \item Appears in heat conduction and diffusion
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{$\nabla^2 \mathbf{v}$}
+\[
+(\nabla^2 \mathbf{v})_i = \frac{\partial^2 v_i}{\partial x_j \partial x_j}
+\]
+
+\begin{itemize}
+  \item Vector Laplacian
+  \item Appears in viscous momentum transport
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{$\mathbf{v}\cdot\mathbf{b}$}
+\[
+\mathbf{v}\cdot\mathbf{b} = v_i b_i
+\]
+
+\begin{itemize}
+  \item Power density of body forces
+  \item Appears in the energy balance
+\end{itemize}
+\end{frame}
+
+% =================================================
+\section{Material Time Derivative}
+% =================================================
+
+% -------------------------------------------------
+\begin{frame}{Eulerian and Lagrangian Descriptions}
+\centering
+\includegraphics[width=0.8\textwidth]{chap01_fig09_eulerian-lagrangian-rotating-drift_a.png}
+\end{frame}
+
+% -------------------------------------------------
+
+\begin{frame}{Eulerian and Lagrangian Descriptions}
+\centering
+\includegraphics[width=0.8\textwidth]{chap01_fig09_eulerian-lagrangian-rotating-drift_b.png}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Material Time Derivative}
+For a scalar field $f(\mathbf{x},t)$:
+\[
+\frac{Df}{Dt} = \frac{\partial f}{\partial t} + v_j \frac{\partial f}{\partial x_j}
+\]
+
+\begin{itemize}
+  \item Time rate of change following a particle
+  \item Combines local and convective effects
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Material Derivative of Velocity}
+\[
+\frac{Dv_i}{Dt} = \frac{\partial v_i}{\partial t} + v_j \frac{\partial v_i}{\partial x_j}
+\]
+
+\begin{block}{Vector form}
+\[
+\frac{D\mathbf{v}}{Dt} = \frac{\partial \mathbf{v}}{\partial t} + (\mathbf{v}\cdot\nabla)\mathbf{v}
+\]
+\end{block}
+\end{frame}
+
+% =================================================
+\section{Balance Laws}
+% =================================================
+
+% -------------------------------------------------
+
+% -------------------------------------------------
+\begin{frame}{Control Volume for Mass Balance}
+\centering
+\includegraphics[width=0.80\textwidth]{chap05_fig01_mass_potato.png}
+\end{frame}
+
+\begin{frame}{Mass Balance}
+\[
+\frac{\partial \rho}{\partial t} + \frac{\partial (\rho v_j)}{\partial x_j} = 0
+\]
+\vspace{0.5em}
+
+\begin{itemize}
+  \item Continuity equation
+  \item Expresses conservation of mass
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+
+% -------------------------------------------------
+\begin{frame}{Control Volume for Momentum Balance}
+\centering
+\includegraphics[width=0.80\textwidth]{chap05_fig03_potato_momentum.png}
+\end{frame}
+
+\begin{frame}{Momentum Balance}
+\[
+\rho \frac{Dv_i}{Dt} = \frac{\partial \sigma_{ij}}{\partial x_j} + \rho b_i
+\]
+
+\begin{itemize}
+  \item Newton's second law per unit volume
+  \item Stress divergence + body forces
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+
+% -------------------------------------------------
+\begin{frame}{Control Volume for Energy Balance}
+\centering
+\includegraphics[width=0.80\textwidth]{chap05_fig05_potato_energy.png}
+\end{frame}
+
+\begin{frame}{Energy Balance}
+\[
+\rho \frac{De}{Dt} = \sigma_{ij}\frac{\partial v_i}{\partial x_j} - \frac{\partial q_j}{\partial x_j} + \rho S
+\]
+
+\begin{itemize}
+  \item Internal energy form
+  \item Mechanical power, heat flux, and sources
+\end{itemize}
+\end{frame}
+
+% =================================================
+\section{Advection--Diffusion Equation}
+% =================================================
+
+% -------------------------------------------------
+\begin{frame}{Thermal Energy Balance}
+Assuming:
+\begin{itemize}
+  \item Constant density and heat capacity
+  \item Fourier's law: $q_i = -k\, \partial T/\partial x_i$
+\end{itemize}
+
+\[
+\rho c \frac{DT}{Dt} = k \nabla^2 T + \rho S
+\]
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Expanded Form}
+\[
+\rho c \left( \frac{\partial T}{\partial t} + v_j \frac{\partial T}{\partial x_j} \right)
+= k \frac{\partial^2 T}{\partial x_j \partial x_j} + \rho S
+\]
+
+\begin{itemize}
+  \item Time-dependent advection--diffusion equation
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Reduction to 1D}
+Assume:
+\begin{itemize}
+  \item $v = v_x(x)$
+  \item $T = T(x,t)$
+\end{itemize}
+
+\[
+\rho c \left( \frac{\partial T}{\partial t} + v_x \frac{\partial T}{\partial x} \right)
+= k \frac{\partial^2 T}{\partial x^2} + \rho S
+\]
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Why This Matters}
+\begin{itemize}
+  \item Clean bridge from continuum mechanics to numerics
+  \item Every term maps directly to a discrete operator
+  \item Sets the stage for FV, FD, FEM, and ML surrogates
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\begin{frame}{Next Time}
+\begin{itemize}
+  \item Finite volume discretization of advection--diffusion
+  \item Upwind vs.\ central differencing
+  \item Stability and physical interpretation
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------
+\end{document}

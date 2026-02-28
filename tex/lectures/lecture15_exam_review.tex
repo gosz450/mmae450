@@ -1,0 +1,576 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme{Madrid}
+\usepackage{amsmath, amssymb}
+\usepackage{physics}
+
+\title{MMAE 450 \\ Midterm 1 Review}
+\author{Prof. Gosz}
+\date{}
+
+\begin{document}
+
+%------------------------------------------------
+\frame{\titlepage}
+
+%------------------------------------------------
+\begin{frame}{What This Exam Is Really About}
+\Large
+\begin{itemize}
+    \item Taylor series
+    \item Linearization (Newton)
+    \item Discretization (finite difference)
+    \item Stability
+    \item Boundary conditions
+\end{itemize}
+
+\vspace{1em}
+\centering
+\Large
+Everything reduces to:\\
+\textbf{Linear systems or explicit updates}
+\end{frame}
+
+%------------------------------------------------
+\section{Newton's Method}
+
+\begin{frame}{Newton's Method (1 Variable)}
+
+Solve:
+\[
+f(x) = 0
+\]
+
+Update:
+\[
+x_{k+1}
+=
+x_k
+-
+\frac{f(x_k)}{f'(x_k)}
+\]
+
+\vspace{1em}
+\pause
+
+\textbf{Derived from Taylor series.}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Newton for Systems}
+
+\[
+\mathbf{R}(\mathbf{x}) = 0
+\]
+
+Linearize:
+\[
+\mathbf{J}(\mathbf{x}_k)\Delta \mathbf{x}
+=
+-
+\mathbf{R}(\mathbf{x}_k)
+\]
+
+Update:
+\[
+\mathbf{x}_{k+1}
+=
+\mathbf{x}_k + \Delta \mathbf{x}
+\]
+
+\vspace{1em}
+\pause
+
+Residual → Jacobian → Linear solve → Update
+\end{frame}
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Taylor Series}
+
+\begin{frame}{Taylor Series (General Form)}
+
+Start with:
+
+\[
+\Delta x = x - x_0
+\]
+
+First-order expansion:
+
+\[
+f(x)
+\approx
+f(x_0)
++
+f'(x_0)\,\Delta x
+\]
+
+\pause
+
+Second-order expansion:
+
+\[
+f(x)
+=
+f(x_0)
++
+f'(x_0)\,\Delta x
++
+\frac{1}{2} f''(x_0)\,(\Delta x)^2
++
+O((\Delta x)^3)
+\]
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Taylor Series for Finite Differences}
+
+Choose:
+
+\[
+\Delta x = h
+\quad \text{and} \quad
+\Delta x = -h
+\]
+
+Then:
+
+\[
+f(x_0 + h)
+=
+f(x_0)
++
+h f'(x_0)
++
+\frac{h^2}{2} f''(x_0)
++
+O(h^3)
+\]
+
+\[
+f(x_0 - h)
+=
+f(x_0)
+-
+h f'(x_0)
++
+\frac{h^2}{2} f''(x_0)
++
+O(h^3)
+\]
+
+\end{frame}
+
+
+%------------------------------------------------
+\begin{frame}{Deriving the Second Derivative}
+
+Add the two expansions:
+
+\[
+f(x_0 + h)
++
+f(x_0 - h)
+=
+2f(x_0)
++
+h^2 f''(x_0)
++
+O(h^4)
+\]
+
+Rearrange:
+
+\[
+f''(x_0)
+=
+\frac{
+f(x_0 + h)
+-
+2f(x_0)
++
+f(x_0 - h)
+}{h^2}
++
+O(h^2)
+\]
+
+\vspace{1em}
+\centering
+Second-order accurate
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+%------------------------------------------------
+\section{1D Heat Conduction}
+
+\begin{frame}{1D Steady-State Heat}
+
+\[
+\frac{d^2T}{dx^2} = 0
+\]
+
+Discretization:
+
+\[
+- T_{i-1}
++ 2T_i
+- T_{i+1}
+= 0
+\]
+
+\vspace{1em}
+\centering
+Tridiagonal linear system
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{1D Transient — FTCS}
+
+\[
+T_i^{n+1}
+=
+T_i^n
++
+r (T_{i+1}^n - 2T_i^n + T_{i-1}^n)
+\]
+
+\[
+r = \frac{\alpha \Delta t}{\Delta x^2}
+\]
+
+\pause
+
+Stability:
+\[
+r \le \frac{1}{2}
+\]
+
+\vspace{1em}
+Explicit = conditionally stable
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{1D Transient — Crank–Nicolson}
+
+\[
+A T^{n+1}
+=
+B T^n
+\]
+
+\pause
+
+\begin{itemize}
+\item Implicit
+\item Unconditionally stable
+\item Must solve linear system each step
+\end{itemize}
+\end{frame}
+
+
+%===========================
+%------------------------------------------------
+\begin{frame}{Crank–Nicolson Example (3 Interior Nodes)}
+
+\large
+1D Heat Equation:
+\[
+\frac{\partial T}{\partial t}
+=
+\alpha \frac{\partial^2 T}{\partial x^2}
+\]
+
+\vspace{0.5em}
+
+Domain: $x \in [0,1]$
+
+\[
+\Delta x = 0.25,
+\qquad
+\alpha = 1,
+\qquad
+r = \frac{\alpha \Delta t}{\Delta x^2} = 1
+\]
+
+\vspace{0.5em}
+
+Dirichlet BCs:
+\[
+T_0 = 0,
+\qquad
+T_4 = 0
+\]
+
+\vspace{0.5em}
+
+Initial interior values:
+\[
+\mathbf{T}^n
+=
+\begin{bmatrix}
+0 \\ 1 \\ 0
+\end{bmatrix}
+\]
+
+\vspace{1em}
+
+\centering
+\textbf{Compute } \mathbf{T}^{n+1}
+\end{frame}
+%=========================
+%------------------------------------------------
+\begin{frame}{Building the Matrix $A$}
+
+Crank–Nicolson interior equation:
+
+\[
+-\frac{r}{2} T_{i-1}^{n+1}
++
+(1+r) T_i^{n+1}
+-
+\frac{r}{2} T_{i+1}^{n+1}
+=
+\text{RHS}
+\]
+
+\vspace{0.8em}
+
+For this example, $r=1$:
+
+\[
+-\frac{1}{2} T_{i-1}^{n+1}
++
+2 T_i^{n+1}
+-
+\frac{1}{2} T_{i+1}^{n+1}
+=
+\text{RHS}
+\]
+
+\vspace{1em}
+
+\centering
+Each interior node contributes:
+
+\[
+\boxed{
+\left[
+-\tfrac{1}{2}
+\quad
+2
+\quad
+-\tfrac{1}{2}
+\right]
+}
+\]
+
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Crank–Nicolson System}
+
+For $r=1$, the discrete system becomes:
+
+\[
+\underbrace{
+\begin{bmatrix}
+2 & -\tfrac{1}{2} & 0 \\
+-\tfrac{1}{2} & 2 & -\tfrac{1}{2} \\
+0 & -\tfrac{1}{2} & 2
+\end{bmatrix}
+}_{A}
+\begin{bmatrix}
+T_1^{n+1} \\
+T_2^{n+1} \\
+T_3^{n+1}
+\end{bmatrix}
+=
+\underbrace{
+\begin{bmatrix}
+\tfrac{1}{2} \\
+0 \\
+\tfrac{1}{2}
+\end{bmatrix}
+}_{\text{RHS}}
+\]
+
+\vspace{1.5em}
+
+\end{frame}
+%===================
+%------------------------------------------------
+\begin{frame}{Building the Right-Hand Side}
+
+Crank–Nicolson equation:
+
+\[
+-\frac{r}{2} T_{i-1}^{n+1}
++
+(1+r) T_i^{n+1}
+-
+\frac{r}{2} T_{i+1}^{n+1}
+=
+\frac{r}{2} T_{i-1}^{n}
++
+(1-r) T_i^{n}
++
+\frac{r}{2} T_{i+1}^{n}
+\]
+
+\vspace{0.8em}
+
+For $r=1$:
+
+\[
+\text{RHS}
+=
+\frac{1}{2} T_{i-1}^{n}
++
+0 \cdot T_i^{n}
++
+\frac{1}{2} T_{i+1}^{n}
+\]
+
+\vspace{1em}
+
+\centering
+RHS depends only on known values at time level $n$.
+\end{frame}
+%====================
+%------------------------------------------------
+\begin{frame}{Compute the RHS Vector}
+
+Given:
+\[
+\mathbf{T}^n =
+\begin{bmatrix}
+0 \\ 1 \\ 0
+\end{bmatrix}
+\]
+
+Node $i=1$:
+\[
+\frac{1}{2} T_2^n = \frac{1}{2}
+\]
+
+Node $i=2$:
+\[
+\frac{1}{2}(T_1^n + T_3^n) = 0
+\]
+
+Node $i=3$:
+\[
+\frac{1}{2} T_2^n = \frac{1}{2}
+\]
+
+\[
+\text{RHS}
+=
+\begin{bmatrix}
+\frac{1}{2} \\
+0 \\
+\frac{1}{2}
+\end{bmatrix}
+\]
+
+\end{frame}
+
+
+%------------------------------------------------
+\section{2D Heat Conduction}
+
+\begin{frame}{2D Steady-State}
+
+\[
+T_{i,j}
+=
+\frac{1}{4}
+\left(
+T_{i+1,j}
++
+T_{i-1,j}
++
+T_{i,j+1}
++
+T_{i,j-1}
+\right)
+\]
+
+\vspace{1em}
+\centering
+5-point stencil
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{2D Transient FTCS}
+
+\[
+T_{i,j}^{n+1}
+=
+T_{i,j}^n
++
+r_x \Delta_x^2
++
+r_y \Delta_y^2
+\]
+
+\pause
+
+If $\Delta x = \Delta y$:
+
+\[
+r \le \frac{1}{4}
+\]
+
+\end{frame}
+
+%------------------------------------------------
+\section{Boundary Conditions}
+
+\begin{frame}{Boundary Conditions}
+
+\Large
+\begin{tabular}{c c}
+Dirichlet & Prescribed value \\
+Neumann & Prescribed derivative \\
+Robin & Mixed condition
+\end{tabular}
+
+\vspace{2em}
+
+\centering
+BCs modify discrete equations.
+\end{frame}
+%===========================
+
+
+
+
+%------------------------------------------------
+\begin{frame}{Closing Thought}
+
+\Large
+Taylor series → Discretization → Linear system
+
+\vspace{1em}
+
+Explicit scheme → Stability restriction
+
+\vspace{1em}
+
+Newton → Linearize → Solve linear system
+
+\end{frame}
+
+\end{document}

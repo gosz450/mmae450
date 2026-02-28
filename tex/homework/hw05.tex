@@ -1,0 +1,196 @@
+%=======================================================================
+% MMAE 450
+% Homework: Finite Volume Method for 1D Advection--Diffusion
+% Total: 20 points
+%=======================================================================
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+%=======================================================================
+\begin{center}
+{\Large \textbf{MMAE 450 -- Computational Mechanics II}} \\[6pt]
+{\large Homework 5: Finite Volume Method for 1D Advection--Diffusion} \\[6pt]
+\textbf{Total: 20 points} \\
+\textbf{Due: March 13, 11:59 pm}
+\end{center}
+%=======================================================================
+
+\hrule
+\vspace{1em}
+
+\textbf{Objective.}
+In this assignment you will implement the finite volume method (FVM)
+for the one-dimensional advection--diffusion equation and investigate
+the influence of the cell Peclet number on numerical behavior.
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+%=======================================================================
+\section*{Problem Description}
+
+A contaminant is introduced into a straight river segment of length
+$L = 1000$ m. The river has a uniform downstream velocity $v$
+and a constant dispersion (diffusion) coefficient $\alpha$.
+
+The pollutant concentration $T(x,t)$ satisfies the
+one-dimensional advection--diffusion equation
+
+\[
+\frac{\partial T}{\partial t}
++
+v \frac{\partial T}{\partial x}
+=
+\alpha \frac{\partial^2 T}{\partial x^2},
+\qquad 0 < x < L.
+\]
+
+Use
+
+\[
+\alpha = 0.5 \text{ m}^2/\text{s}.
+\]
+
+\vspace{0.5em}
+
+\textbf{Initial condition (localized spill):}
+
+\[
+T(x,0) =
+\begin{cases}
+1, & 0.4L \le x \le 0.6L, \\
+0, & \text{otherwise}.
+\end{cases}
+\]
+
+\vspace{0.5em}
+
+\textbf{Boundary conditions:}
+
+\begin{itemize}
+\item Upstream boundary (inlet): $T(0,t) = 0$
+\item Downstream boundary (open outlet):
+\[
+\frac{\partial T}{\partial x}(L,t) = 0
+\]
+\end{itemize}
+
+Assume the flow is steady and the pollutant does not affect the velocity field.
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+%=======================================================================
+\section*{(a) Derivation (5 pts)}
+
+Starting from the conservative form
+
+\[
+\frac{\partial T}{\partial t}
++
+\frac{\partial}{\partial x}
+\left(
+vT - \alpha \frac{\partial T}{\partial x}
+\right)
+=
+0,
+\]
+
+derive the fully discrete finite volume update using:
+
+\begin{itemize}
+\item Central interpolation for the convective flux
+\item Central difference for the diffusive flux
+\item Forward Euler in time
+\end{itemize}
+
+Present the final update equation clearly.
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+%=======================================================================
+\section*{(b) Implementation (10 pts)}
+
+Write a Python program that:
+
+\begin{enumerate}
+\item Discretizes the domain into $N=100$ uniform cells.
+\item Implements the fully discrete update derived in part (a).
+\item Applies the boundary conditions correctly at each time step.
+\item Advances the solution to $t = 200$ s.
+\end{enumerate}
+
+Plot the solution at
+
+\[
+t = 0,\quad 50,\quad 100,\quad 200 \text{ s}.
+\]
+
+Plots must include labeled axes and a legend.
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+%=======================================================================
+\section*{(c) Peclet Number Study (5 pts)}
+
+Repeat the simulation for
+
+\[
+v = 1,\quad 5,\quad 10 \text{ m/s}.
+\]
+
+For each case:
+
+\begin{enumerate}
+\item Compute the cell Peclet number
+\[
+\mathrm{Pe}_{\Delta x} = \frac{v \Delta x}{\alpha}.
+\]
+\item Plot the solution at $t=200$ s.
+\item Comment briefly on oscillations or instability.
+\end{enumerate}
+
+Relate your observations to the magnitude of the Peclet number.
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+%=======================================================================
+
+%=======================================================================
+\section*{Submission Requirements}
+
+Submit:
+
+\begin{itemize}
+\item A single PDF containing derivations, plots, and discussion.
+\item Your Python code.
+\end{itemize}
+
+Code must be readable and commented.
+
+\vspace{2em}
+
+\begin{center}
+\textbf{Total: 20 points}
+\end{center}
+
+\end{document}

@@ -1,0 +1,66 @@
+% ============================================================
+% TikZ house styles for EPUB + PDF (font-stable, width-stable)
+% ============================================================
+
+\ifdefined\FigWidth\else
+  \def\FigWidth{8.5cm}
+\fi
+\ifdefined\FigDesignWidth\else
+  \def\FigDesignWidth{4.4}
+\fi
+
+\pgfmathsetlengthmacro{\u}{\FigWidth/\FigDesignWidth}
+
+\tikzset{
+  house/.style={
+    x=\u, y=\u,
+    line cap=round,
+    line join=round,
+    font=\figMainFont
+  },
+  % -------- Line weights --------
+  axisLine/.style   ={line width=0.9pt},
+  vectorLine/.style ={line width=1.2pt},
+  auxLine/.style    ={line width=0.9pt, dashed},
+  % -------- Arrowheads (single-headed) --------
+  axisArrow/.style={
+  axisLine,
+  -{Stealth[length=3.2mm,width=2.2mm]},
+  shorten >=1.2pt
+},
+vectorArrow/.style={
+  vectorLine,
+  -{Stealth[length=3.2mm,width=2.2mm]},
+  shorten >=1.2pt
+},
+angleArrow/.style={
+  axisLine,
+  -{Stealth[length=2.6mm,width=1.8mm]},
+  shorten >=1.0pt
+},
+  % -------- Distance / dimension arrows (double-headed) --------
+  distArrow/.style={
+    line width=0.8pt,
+    {Stealth[length=2.6mm,width=1.8mm]}-{Stealth[length=2.6mm,width=1.8mm]},
+    shorten >=1pt,
+    shorten <=1pt
+  },
+  % -------- Label helpers --------
+  axisLabel/.style   ={font=\figAxisFont},
+  figureLabel/.style ={font=\figMainFont},
+  % ---- Compatibility aliases ----
+  axisTitle/.style = {axisLabel},
+  tickLabel/.style = {figureLabel},
+  mainText/.style  = {figureLabel}
+}
+
+% -------------------------------------------------
+% Vector arrow style (for b, v, n, etc.)
+% -------------------------------------------------
+\tikzset{
+  vec/.style={
+    ->,
+    thick,
+    >=stealth
+  }
+}
