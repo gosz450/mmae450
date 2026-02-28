@@ -1,0 +1,346 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{center}
+\Large
+\textbf{MMAE 450 -- Midterm 1} \\[6pt]
+\normalsize
+Time: 75 minutes
+\end{center}
+
+\vspace{0.5in}
+
+\noindent
+\textbf{Name:} \rule{4in}{0.4pt}
+
+\vspace{0.3in}
+
+\noindent
+\textbf{Student ID:} \rule{3in}{0.4pt}
+
+\vspace{0.5in}
+\textbf{Instructions:}
+\begin{itemize}
+    \item Show all work for full credit.
+    \item Clearly box or underline final answers.
+    \item In addition to your laptop (Canvas under lockdown browser) you may use a calculator and one 8 1/2 by 11 formula sheet.
+    \item No phones or smart watches.
+\end{itemize}
+
+\vspace{1em}
+
+%----------------------------------------------------------
+\section*{Problem 1: Potential Energy $\rightarrow$ Residual $\rightarrow$ Newton (10 pts)}
+
+Let the total potential energy be a scalar function $
+\Pi$  of the two displacement components $u_1$ and $u_2$:
+\[
+\Pi(u_1,u_2)
+=
+\frac{1}{4}u_1^{4}
++
+\frac{1}{2}u_1^{2}
++
+u_2^{2}
++
+\frac{1}{2}u_1u_2
+-
+u_1
+-
+2u_2
+\]
+The equilibrium equations are obtained by minimizing $\Pi$, i.e.
+\[
+\mathbf{f}(u_1,u_2)=\boldsymbol{\nabla} \Pi(u_1,u_2)=\mathbf{0}.
+\]
+
+\textbf{(a) Multiple choice (2 pts)}  
+Which is the residual vector $\mathbf{f}(u_1,u_2)$?
+
+\begin{itemize}[label=$\square$]
+\item A)
+\(
+\mathbf{f}=
+\begin{bmatrix}
+u_1^{3}+u_1+\frac{1}{2}u_2-1\\[2pt]
+2u_2+\frac{1}{2}u_1-2
+\end{bmatrix}
+\)
+\item B)
+\(
+\mathbf{f}=
+\begin{bmatrix}
+u_1^{3}+u_1+\frac{1}{2}u_2-2\\[2pt]
+u_2+\frac{1}{2}u_1-2
+\end{bmatrix}
+\)
+\item C)
+\(
+\mathbf{f}=
+\begin{bmatrix}
+u_1^{3}+u_1+u_2-1\\[2pt]
+2u_2+u_1-2
+\end{bmatrix}
+\)
+\item D)
+\(
+\mathbf{f}=
+\begin{bmatrix}
+3u_1^{2}+1\\[2pt]
+2
+\end{bmatrix}
+\)
+\end{itemize}
+
+\vspace{0.75em}
+\newpage
+\textbf{(b) Multiple choice (2 pts)}  
+Which is the Jacobian matrix $\mathbf{J}(u_1,u_2)=\dfrac{\partial \mathbf{f}}{\partial \mathbf{u}}$?
+
+\begin{itemize}[label=$\square$]
+\item A)
+\(
+\mathbf{J}=
+\begin{bmatrix}
+3u_1^{2}+1 & \frac{1}{2}\\[2pt]
+\frac{1}{2} & 2
+\end{bmatrix}
+\)
+\item B)
+\(
+\mathbf{J}=
+\begin{bmatrix}
+u_1^{3}+1 & \frac{1}{2}\\[2pt]
+\frac{1}{2} & 2u_2
+\end{bmatrix}
+\)
+\item C)
+\(
+\mathbf{J}=
+\begin{bmatrix}
+3u_1^{2}+1 & 1\\[2pt]
+1 & 2
+\end{bmatrix}
+\)
+\item D)
+\(
+\mathbf{J}=
+\begin{bmatrix}
+3u_1^{2}+1 & 0\\[2pt]
+0 & 2
+\end{bmatrix}
+\)
+\end{itemize}
+
+\vspace{0.75em}
+
+\textbf{(c) (4 pts)}  
+Use one Newton iteration starting from
+\[
+\mathbf{u}^{(0)}=
+\begin{bmatrix}
+0\\0
+\end{bmatrix}.
+\]
+That is, compute $\Delta \mathbf{u}$ from
+\[
+\mathbf{J}(\mathbf{u}^{(0)})\,\Delta \mathbf{u} = -\mathbf{f}(\mathbf{u}^{(0)}),
+\]
+then
+\[
+\mathbf{u}^{(1)} = \mathbf{u}^{(0)} + \Delta \mathbf{u}.
+\]
+Show your work.
+
+\vspace{0.75in}
+
+\textbf{(d) (1 pt)}  
+Compute the residual vector $\mathbf{f}(\mathbf{u}^{(1)})$.
+
+\vspace{1.5in}
+
+\textbf{(e) (1 pt)}  
+Compute the norm of the residual vector after one iteration:
+\[
+\|\mathbf{f}(\mathbf{u})^{(1)}\|.
+\]
+
+\vspace{1.25in}
+\newpage
+
+%----------------------------------------------------------
+\section*{Problem 2: 1D Steady Heat Conduction (10 pts)}
+
+Consider:
+\[
+\frac{d^2 T}{dx^2} = 0
+\]
+on $0 \le x \le 1$ with
+\[
+T(0)=0, \qquad T(1)=100.
+\]
+
+Use 3 interior nodes and $\Delta x = 0.25$.
+\vspace{1.0in}
+
+\textbf{(a) (5 pts)}  
+Using a central difference approximation, write the discrete equations at each interior node.
+
+\vspace{2in}
+
+\textbf{(b) (5 pts)}  
+Write the resulting linear system $\mathbf{A} \mathbf{T} = \mathbf{b}$ in matrix form.
+
+\vspace{2in}
+\newpage
+%----------------------------------------------------------
+\section*{Problem 3: 1D Transient Heat -- FTCS (10 pts)}
+
+The 1D heat equation is:
+\[
+\frac{\partial T}{\partial t}
+=
+\alpha \frac{\partial^2 T}{\partial x^2}.
+\]
+
+\textbf{(a) (5 pts)}  
+Write the FTCS update formula.
+
+\vspace{1.5in}
+
+\textbf{(b) (3 pts)}  
+Define $r$ in terms of $\Delta x, \Delta t$ and $\alpha$ and state the stability condition.
+
+\vspace{1.5in}
+
+\textbf{(c) (2 pts)}  
+If $\alpha=1$, $\Delta x=0.1$, and $\Delta t=0.01$, is the scheme stable? Show calculation.
+
+\vspace{1.5in}
+
+\newpage
+%----------------------------------------------------------
+\section*{Problem 4: Neumann BC at $x=L$ (Prescribed Constant Heat Flux) (10 pts)}
+
+Consider 1D transient heat conduction
+\[
+\frac{\partial T}{\partial t}=\alpha\,\frac{\partial^2 T}{\partial x^2},
+\]
+on a uniform grid with spacing $\Delta x$. Let the right boundary be node $N$ at $x_N=L$, and the neighboring interior node be $N-1$ at $x_{N-1}=L-\Delta x$.
+
+A constant heat flux is prescribed at $x=L$:
+\[
+q^* = -k\,\left.\frac{\partial T}{\partial x}\right|_{x=L},
+\]
+where $k$ is the thermal conductivity (a constant).
+
+\vspace{0.4in}
+Approximate the temperature field using a 3-term Taylor series about the boundary node $x_N=L$ as follows:
+\[
+T(x)\approx T_N + (x-x_N)\,T'_N + \frac{1}{2}(x-x_N)^2\,T''_N.
+\]
+
+\vspace{1.0in}
+
+\textbf{(a) (2 pts)} Using the Taylor series above, evaluate $T(x)$ at $x_{N-1}=x_N-\Delta x$ to obtain an expression for $T_{N-1}$ in terms of $T_N$, $T'_N$, $T''_N$, and $\Delta x$.
+
+\vspace{1.4in}
+
+\textbf{(b) (2 pts)} Substitute the prescribed flux condition
+\[
+T'_N = \left.\frac{dT}{dx}\right|_{x=L} = -\frac{q^*}{k}
+\]
+
+into your expression from part (a).
+
+\vspace{1.4in}
+
+\textbf{(c) (2 pts)} From part (b), solve for the second derivative at the boundary node:
+\[
+T''_N=\left.\frac{d^2T}{dx^2}\right|_{x=L},
+\]
+in terms of $T_N$, $T_{N-1}$, $\Delta x$, $q^*$, and $k$.
+
+\vspace{1.6in}
+
+\textbf{(d) (4 pts)} For the 1D heat equation, the FTCS time update can be written as 
+\[
+T_N^{n+1} = T_N^n + \alpha\,\Delta t\,\left(T''_N\right)^n.
+\]
+
+Using your approximation for $(T_N'')^n$ obtained in part (c), write the explicit update formula for the boundary node $T_N^{n+1}$.
+
+\newpage
+
+
+
+
+
+
+%==========================================
+
+\section*{Problem 5: Conceptual Questions (10 pts)}
+
+\textbf{(Circle the correct answer.)}
+
+\begin{enumerate}[label=\alph*)]
+
+\item (2 pts) The Crank–Nicolson method for the heat equation is best described as:
+\begin{itemize}
+    \item A) Explicit and first-order accurate in time
+    \item B) Implicit and unconditionally stable
+    \item C) Explicit and unconditionally stable
+    \item D) First-order accurate in time
+\end{itemize}
+
+\item (2 pts) A Neumann boundary condition specifies:
+\begin{itemize}
+    \item A) The temperature at the boundary
+    \item B) The temperature at the previous time step
+    \item C) The derivative of temperature (heat flux) at the boundary
+    \item D) The interior node value
+  \end{itemize}
+
+\item (2 pts) The central difference approximation of the second derivative is more accurate than a one-sided approximation because:
+\begin{itemize}
+    \item A) It uses fewer grid points
+    \item B) It has a smaller truncation error order
+    \item C) It eliminates time discretization error
+    \item D) It is unconditionally stable
+\end{itemize}
+
+\item (2 pts) The standard 5-point stencil for the 2D Laplacian at an interior node involves:
+\begin{itemize}
+    \item A) Only diagonal neighbors
+    \item B) Only time-level neighbors
+    \item C) The north, south, east, and west neighboring nodes
+    \item D) Eight surrounding nodes
+\end{itemize}
+
+
+
+\item (2 pts) Write clear pseudocode for advancing the 1D heat equation in time using the FTCS method.
+
+
+
+
+
+Your pseudocode should show:
+
+- a time loop,\\
+- the interior node update,\\
+- and enforcement of boundary conditions.
+
+\end{enumerate}
+\newpage
+\vfill
+\begin{center}
+\textbf{End of Exam}
+\end{center}
+
+\end{document}

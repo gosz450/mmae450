@@ -1,0 +1,70 @@
+%=======================================================================
+% chap05_fig08_1D_fv_discretization.tikz
+% 1D finite volume discretization for advection–diffusion (HOUSE STYLE)
+%=======================================================================
+
+\providecommand{\FigWidth}{8.0cm}   % fallback only
+\def\FigDesignWidth{6.2}           % includes label margins
+
+\input{tex/preamble/tikz_house_styles.tex}
+
+\begin{tikzpicture}[house]
+
+  % ---- Styles ----
+  \tikzset{
+    halfMain/.style = {font=\figMainFont},
+    halfAxis/.style = {font=\figAxisFont},
+    axis/.style     = {axisLine, line width=0.9pt},
+    face/.style     = {axisLine, line width=0.6pt},
+    tick/.style     = {axisLine, line width=0.6pt},
+    cellFill/.style = {fill=gray!15, draw=black, line width=0.8pt},
+    brace/.style    = {decorate, decoration={brace, amplitude=4pt}, line width=0.6pt},
+    flowArrow/.style= {axisArrow, line width=0.8pt},
+    centerDot/.style= {fill=black},
+  }
+
+  % ---- Layout parameters (DESIGN UNITS) ----
+  \def\L{5}          % total length in cell-width units
+  \def\nCells{5}
+  \pgfmathsetmacro{\dx}{\L/\nCells}
+
+  % ---- Axis ----
+  \draw[axis] (0,0) -- (\L,0);
+  \node[halfAxis, below] at (0,-0.55) {$x=0$};
+  \node[halfAxis, below] at (\L,-0.55) {$x=L$};
+
+  % ---- Faces and centers ----
+  \foreach \j in {0,...,\nCells} {
+    \draw[face] (\j*\dx,0.35) -- (\j*\dx,-0.35);
+  }
+  \foreach \j in {1,...,\nCells} {
+    \pgfmathsetmacro{\xc}{\j*\dx-0.5*\dx}
+    \draw[tick] (\xc,0.18) -- (\xc,-0.18);
+  }
+
+  % ---- Highlight CV i (center cell) ----
+  \pgfmathsetmacro{\i}{3}
+  \pgfmathsetmacro{\xw}{\i*\dx-\dx}   % x_{i-1/2}
+  \pgfmathsetmacro{\xe}{\i*\dx}       % x_{i+1/2}
+  \pgfmathsetmacro{\xi}{(\xw+\xe)/2}  % x_i
+
+  \path[cellFill] (\xw,-0.60) rectangle (\xe,0.60);
+
+  % ---- Face labels centered above the highlighted faces ----
+  \node[halfMain, above] at (\xw,0.62) {$x_{i-1/2}$};
+  \node[halfMain, above] at (\xe,0.62) {$x_{i+1/2}$};
+
+  % ---- Center dot + labels near it ----
+  \fill[centerDot] (\xi,0) circle (1.6pt);
+
+  \node[halfMain, anchor=west] at (\xi+0.00,0.14) {$x_i$};
+  \node[halfMain, anchor=west] at (\xi+0.00,-0.18) {$T_i$};
+
+  % ---- Δx brace (for the highlighted control volume) ----
+  \draw[brace] (\xw,-1.00) -- node[halfMain, below=5pt] {$\Delta x$} (\xe,-1.00);
+
+  % ---- Flow direction arrow ----
+  \draw[flowArrow] (0,-1.20) -- ++(2.2,0)
+    node[halfAxis, midway, below] {flow $v$};
+
+\end{tikzpicture}

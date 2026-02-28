@@ -1,0 +1,218 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{center}
+\Large
+\textbf{MMAE 450 -- Midterm 1 (Makeup)} \\[6pt]
+\normalsize
+Time: 75 minutes
+\end{center}
+
+\vspace{0.5in}
+
+\noindent
+\textbf{Name:} \rule{4in}{0.4pt}
+
+\vspace{0.3in}
+
+\noindent
+\textbf{Student ID:} \rule{3in}{0.4pt}
+
+\vspace{0.5in}
+\textbf{Instructions:}
+\begin{itemize}
+    \item Show all work for full credit.
+    \item Clearly box final answers.
+    \item Calculator and one 8.5$\times$11 formula sheet allowed.
+    \item No phones or smart watches.
+\end{itemize}
+
+\newpage
+
+%----------------------------------------------------------
+\section*{Problem 1: Newton Method for a Nonlinear System (10 pts)}
+
+Consider the nonlinear system
+
+\[
+\begin{cases}
+f_1(u_1,u_2) = u_1^2 + 2u_1 - u_2 - 3 = 0 \\
+f_2(u_1,u_2) = u_1 + u_2^2 - 2 = 0
+\end{cases}
+\]
+
+\textbf{(a) (3 pts)}  
+Compute the Jacobian matrix $\mathbf{J}(u_1,u_2)$.
+
+\vspace{2in}
+
+\textbf{(b) (5 pts)}  
+Starting from
+
+\[
+\mathbf{u}^{(0)}=
+\begin{bmatrix}
+1\\1
+\end{bmatrix},
+\]
+
+perform one full Newton iteration and compute $\mathbf{u}^{(1)}$.
+
+\vspace{2in}
+
+\textbf{(c) (2 pts)}  
+Compute the residual norm $\|\mathbf{f}(\mathbf{u}^{(1)})\|$.
+
+\newpage
+
+%----------------------------------------------------------
+\section*{Problem 2: 1D Steady Conduction with Source (10 pts)}
+
+\[
+\frac{d^2 T}{dx^2} + 5 = 0
+\]
+
+on $0 \le x \le 1$
+
+with
+
+\[
+T(0)=0, \qquad T(1)=100.
+\]
+
+Use 3 interior nodes with $\Delta x = 0.25$.
+
+\textbf{(a) (6 pts)}  
+Write the finite difference equations at each interior node.
+
+\vspace{2.5in}
+
+\textbf{(b) (4 pts)}  
+Write the matrix system $\mathbf{A}\mathbf{T}=\mathbf{b}$.
+
+\newpage
+
+%----------------------------------------------------------
+\section*{Problem 3: FTCS Method (10 pts)}
+
+\[
+\frac{\partial T}{\partial t}
+=
+\alpha \frac{\partial^2 T}{\partial x^2}.
+\]
+
+\textbf{(a) (4 pts)}  
+Derive the FTCS update formula for $T_i^{n+1}$.
+
+\vspace{2in}
+
+\textbf{(b) (3 pts)}  
+Define the diffusion number
+
+\[
+r = \frac{\alpha \Delta t}{\Delta x^2}.
+\]
+
+State the stability condition.
+
+\vspace{1.5in}
+
+\textbf{(c) (3 pts)}  
+
+If $\alpha = 1.5$, $\Delta x = 0.25$, and $\Delta t = 0.02$, determine whether the scheme is stable.
+
+\newpage
+
+%----------------------------------------------------------
+%----------------------------------------------------------
+\section*{Problem 4: Convection Boundary Condition (10 pts)}
+
+Consider steady 1D conduction
+\[
+\frac{d^2 T}{dx^2}=0
+\]
+
+with a convection boundary condition at $x=0$:
+\[
+-k\frac{dT}{dx}(0) = h(T_0 - T_\infty),
+\]
+and $T(L)=100$.
+\vspace{0.5in}
+
+\textbf{(10 pts)}  
+Using a forward difference approximation
+\[
+\frac{dT}{dx}(0) \approx \frac{T_1 - T_0}{\Delta x},
+\]
+derive the discrete boundary equation relating $T_0$ and $T_1$.
+
+
+\newpage
+
+%----------------------------------------------------------
+\section*{Problem 5: Conceptual Understanding (10 pts)}
+
+\textbf{(a) Multiple Choice (8 pts)}  
+Select the correct answer for each question.
+
+\begin{enumerate}[label=\arabic*.]
+
+\item The Jacobian in Newton’s method represents:
+\begin{itemize}
+\item A) The solution vector
+\item B) The matrix of partial derivatives of the residual
+\item C) The inverse of the Hessian
+\item D) The time derivative of the system
+\end{itemize}
+
+\item A Dirichlet boundary condition specifies:
+\begin{itemize}
+\item A) Heat flux
+\item B) Temperature
+\item C) Second derivative
+\item D) Convection coefficient
+\end{itemize}
+
+\item The FTCS method becomes unstable when:
+\begin{itemize}
+\item A) $r < 1/2$
+\item B) $r > 1/2$
+\item C) $\Delta x \to 0$
+\item D) $\alpha = 0$
+\end{itemize}
+
+\item The standard 2D Laplacian central difference uses:
+\begin{itemize}
+\item A) 3-point stencil
+\item B) 4-point stencil
+\item C) 5-point stencil
+\item D) 9-point stencil
+\end{itemize}
+
+\end{enumerate}
+
+\vspace{1em}
+
+\textbf{(b) (2 pts)}  
+
+Write clear pseudocode for advancing one time step of the 1D FTCS method.  
+Include:
+\begin{itemize}
+\item Time loop
+\item Interior node update
+\item Boundary enforcement
+\end{itemize}
+
+\vspace{1.5in}
+
+\vfill
+\begin{center}
+\textbf{End of Exam}
+\end{center}
+
+\end{document}
