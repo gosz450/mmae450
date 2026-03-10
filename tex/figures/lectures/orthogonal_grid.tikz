@@ -1,0 +1,70 @@
+%=======================================================================
+% chap05_figXX_2D_fv_diffusion_face.tikz
+% 2D finite volume diffusion term at a face (HOUSE STYLE)
+%=======================================================================
+
+\providecommand{\FigWidth}{8.0cm}   % fallback only
+\def\FigDesignWidth{8.0}           % includes label margins
+
+\input{../preamble/tikz_house_styles.tex}
+
+\begin{tikzpicture}[house]
+
+  % ---- Styles ----
+  \tikzset{
+    halfMain/.style = {font=\figMainFont},
+    halfAxis/.style = {font=\figAxisFont},
+    axis/.style     = {axisLine, line width=0.9pt},
+    face/.style     = {axisLine, line width=1.0pt},
+    cellEdge/.style = {axisLine, line width=0.8pt},
+    centerDot/.style= {fill=black},
+    normalArrow/.style = {axisArrow, line width=0.9pt},
+    brace/.style    = {decorate, decoration={brace, amplitude=4pt}, line width=0.6pt}
+  }
+
+  % ---- Layout parameters (DESIGN UNITS) ----
+  \def\cellW{3.2}
+  \def\cellH{2.2}
+  \def\xP{0.5*\cellW}
+  \def\xN{1.5*\cellW}
+  \def\yC{0.5*\cellH}
+
+  % ---- Cells P and N ----
+  \draw[cellEdge] (0,0) rectangle (\cellW,\cellH);
+  \draw[cellEdge] (\cellW,0) rectangle (2*\cellW,\cellH);
+
+  % ---- Shared face ----
+  \draw[face] (\cellW,0) -- (\cellW,\cellH);
+
+  % ---- Cell centers ----
+  \fill[centerDot] (\xP,\yC) circle (2pt);
+  \fill[centerDot] (\xN,\yC) circle (2pt);
+
+  \node[halfMain, below=3pt] at (\xP,\yC) {$P$};
+  \node[halfMain, below=3pt] at (\xN,\yC) {$N$};
+
+  % ---- Velocity labels ----
+  \node[halfMain] at (\xP,0.78*\cellH) {$\mathbf{v}_P$};
+  \node[halfMain] at (\xN,0.78*\cellH) {$\mathbf{v}_N$};
+
+  % ---- Face midpoint ----
+  \fill[centerDot] (\cellW,\yC) circle (1.6pt);
+  \node[halfMain, right=3pt] at (\cellW,\yC+0.2) {$f$};
+
+  % ---- Normal vector ----
+  \draw[normalArrow] (\cellW,\yC) -- ++(1.0,0)
+      node[halfMain, right] {$\mathbf{n}_f$};
+
+  % ---- Distance between centers ----
+  \draw[brace] (\xP,0.12*\cellH) -- (\xN,0.12*\cellH)
+      node[midway, below=8pt, halfAxis] {$d_{PN}$};
+
+  % ---- Diffusion approximation equation ----
+  \node[halfMain, align=center] at (\cellW,-1.2)
+  {$
+  (\nabla \mathbf{v})_f \cdot \mathbf{n}_f
+  \;\approx\;
+  \dfrac{\mathbf{v}_N - \mathbf{v}_P}{d_{PN}}
+  $};
+
+\end{tikzpicture}

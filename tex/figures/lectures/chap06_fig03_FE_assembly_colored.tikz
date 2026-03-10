@@ -1,0 +1,113 @@
+%===========================================================
+% chap06_fig03_FE_assembly_colored.tikz  (HOUSE STYLE)
+% Assembly of two element matrices into a global matrix
+%===========================================================
+
+\providecommand{\FigWidth}{11.0cm} % fallback only
+\def\FigDesignWidth{12.0}          % design units across (gives comfortable margins)
+
+\input{tex/preamble/tikz_house_styles.tex}
+
+\begin{tikzpicture}[house]
+
+  % Keep this figure from inheriting any huge wrapper fonts
+  \tikzset{
+    every node/.style={font=\normalsize, align=center},
+    main/.style={font=\figMainFont, align=center},
+    axis/.style={font=\figAxisFont, align=center},
+    meshLine/.style={line width=0.9pt},
+    highlight1/.style={blue, line width=1.4pt},
+    highlight2/.style={red,  line width=1.4pt},
+  }
+
+  % --------------------------------------------------------
+  % 1D mesh (top), centered
+  % --------------------------------------------------------
+  \coordinate (x1) at (-2.3,0);
+  \coordinate (x2) at (0,0);
+  \coordinate (x3) at (2.3,0);
+
+  \draw[meshLine] (x1) -- (x2) -- (x3);
+  \fill (x1) circle (2.0pt);
+  \fill (x2) circle (2.0pt);
+  \fill (x3) circle (2.0pt);
+
+  \node[axis, below=3pt] at (x1) {$1$};
+  \node[axis, below=3pt] at (x2) {$2$};
+  \node[axis, below=3pt] at (x3) {$3$};
+
+  \node[axis, above=3pt] at ($(x1)!0.5!(x2)$) {$e=1$};
+  \node[axis, above=3pt] at ($(x2)!0.5!(x3)$) {$e=2$};
+
+  \coordinate (meshcenter) at ($(x1)!0.5!(x3)$); % (0,0)
+
+  % --------------------------------------------------------
+  % Element matrices K1 and K2, under the mesh
+  % --------------------------------------------------------
+  \coordinate (Kpaircenter) at ($(meshcenter)+(0,-2.0)$);
+
+  \node[main] (K1) at ($(Kpaircenter)+(-2.7,0)$)
+  {$\displaystyle
+    \mathbf{K}_1 =
+    \begin{bmatrix}
+      k_{11}^{(1)} & k_{12}^{(1)} \\
+      k_{21}^{(1)} & k_{22}^{(1)}
+    \end{bmatrix}$};
+
+ % --- K1 row labels (moved up more)
+\node[axis] at ($(K1.east)+(0.20,0.42)$) {$1$};
+\node[axis] at ($(K1.east)+(0.20,-0.38)$) {$2$};
+
+% --- K1 column labels (slightly lower)
+\node[axis] at ($(K1.south)+(0,-.26)$)
+  {$\begin{matrix} \hspace{0.9cm}1 \hspace{0.8cm} 2 \end{matrix}$};
+
+  \node[main] (K2) at ($(Kpaircenter)+(2.7,0)$)
+  {$\displaystyle
+    \mathbf{K}_2 =
+    \begin{bmatrix}
+      k_{11}^{(2)} & k_{12}^{(2)} \\
+      k_{21}^{(2)} & k_{22}^{(2)}
+    \end{bmatrix}$};
+
+ % --- K2 row labels (moved up more)
+\node[axis] at ($(K2.east)+(0.20,0.42)$) {$2$};
+\node[axis] at ($(K2.east)+(0.20,-0.38)$) {$3$};
+
+% --- K2 column labels (slightly lower)
+\node[axis] at ($(K2.south)+(0,-0.26)$)
+  {$\begin{matrix} \hspace{0.9cm}2 \hspace{0.8cm} 3 \end{matrix}$};
+
+  % --------------------------------------------------------
+  % Global matrix K, centered under K1/K2
+  % --------------------------------------------------------
+ \coordinate (Kcenter) at ($(meshcenter)+(0,-5.3)$);
+
+  \node[main] (Kglob) at (Kcenter)
+  {$\displaystyle
+  \mathbf{K} =
+  \begin{bmatrix}
+    \color{blue}{k_{11}^{(1)}} &
+    \color{blue}{k_{12}^{(1)}} &
+    0 \\
+    \color{blue}{k_{21}^{(1)}} &
+    \color{blue}{k_{22}^{(1)}} + \color{red}{k_{11}^{(2)}} &
+    \color{red}{k_{12}^{(2)}} \\
+    0 &
+    \color{red}{k_{21}^{(2)}} &
+    \color{red}{k_{22}^{(2)}}
+  \end{bmatrix}$};
+  
+  % --------------------------------------------------------
+% Global K row/column labels
+% --------------------------------------------------------
+
+% Row labels on the right (1,2,3)
+\node[axis] at ($(Kglob.east)+(0.20, 0.80)$) {$1$};
+\node[axis] at ($(Kglob.east)+(0.20, 0.00)$) {$2$};
+\node[axis] at ($(Kglob.east)+(0.20,-0.80)$) {$3$};
+
+% --- Global K column labels (moved up)
+\node[axis] at ($(Kglob.south)+(0,-0.34)$)
+  {$\begin{matrix}\hspace{1.15cm}1\hspace{1.35cm}2\hspace{1.25cm}3\end{matrix}$};
+\end{tikzpicture}

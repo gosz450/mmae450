@@ -1,0 +1,92 @@
+%=======================================================================
+% MMAE 450 Homework: Indicial Notation Identities for FV Flux Form
+%=======================================================================
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+
+% --- Course header macros ---
+\newcommand{\course}{MMAE 450}
+\newcommand{\hwtitle}{Homework: Indicial Notation Identities for Finite Volume Flux Form}
+\newcommand{\duedate}{Due: 3/13/2026}
+\newcommand{\points}{10}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{\course}}\\[2pt]
+{\large \textbf{\hwtitle}}\\[6pt]
+\duedate \hfill \textbf{Total: \points\ pts}
+\end{center}
+
+\vspace{0.5em}
+\noindent\textbf{Name:} \underline{\hspace{7cm}} \hfill
+
+
+\vspace{1em}
+
+%=======================================================================
+\section*{Problem 1: Convection identity (4 pts)}
+%=======================================================================
+
+\noindent Prove the identity
+\[
+(\mathbf{v}\cdot\nabla)\mathbf{v}
+=
+\nabla\cdot(\mathbf{v}\otimes\mathbf{v})
+\qquad \text{for incompressible flow}.
+\]
+
+\bigskip
+Your proof must:
+
+\begin{itemize}
+\item Express both sides in indicial notation.
+\item Apply the product rule to $(v_i v_j)_{,j}$.
+\item Clearly identify where the incompressibility condition
+\[
+v_{j,j}=0
+\]
+is used.
+\end{itemize}
+
+\bigskip
+Your final answer may be written in vector form, but the derivation must be
+shown in index notation.
+
+%=======================================================================
+\section*{Problem 2: Pressure term as divergence (3 pts)}
+%=======================================================================
+
+\noindent Prove the identity
+\[
+-\nabla p = -\nabla\cdot(p\mathbf{I}),
+\]
+where $\mathbf{I}$ is the identity tensor.
+
+Write the $i$-th component in index form and simplify using the Kronecker delta
+$\delta_{ij}$.
+
+\vspace{1em}
+
+%=======================================================================
+\section*{Problem 3: Diffusion term as divergence (3 pts)}
+%=======================================================================
+
+\noindent Assume $\mu$ is constant. Prove the identity
+\[
+\mu\nabla^2\mathbf{v}
+=
+\nabla\cdot(\mu\nabla\mathbf{v}).
+\]
+
+Write both sides in indicial form and simplify to show equality.
+
+\vspace{1em}
+
+
+
+
+\end{document}

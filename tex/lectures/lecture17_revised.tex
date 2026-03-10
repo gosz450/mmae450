@@ -1,0 +1,840 @@
+%=======================================================================
+% mmae450/tex/lectures/lecture_fvm_1D_intro.tex
+% Standalone Beamer deck that inputs an existing Chapter 5 .tikz figure
+% located in: mmae450/tex/figures/lectures/
+%
+% IMPORTANT:
+% The .tikz file itself does: \input{tex/preamble/tikz_house_styles.tex}
+% so we add the repo root to TeX's input search path using \input@path.
+%=======================================================================
+
+
+\documentclass[aspectratio=169]{beamer}
+
+% --- Your beamer styling (adjust path/name if yours differs)
+\input{../preamble/beamer_styles.tex}
+
+% --- TikZ (beamer_styles.tex may already load it; harmless if duplicated)
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,decorations.pathreplacing}
+
+% --- Make sure TeX can resolve paths like tex/preamble/... used INSIDE the .tikz
+% From mmae450/tex/lectures, the repo root is ../../
+\makeatletter
+\def\input@path{{../../}{../}{./}}
+\makeatother
+
+\title{Finite Volume Method in 1D}
+\subtitle{Finite Volume Method for Incompressible Fluid Flow}
+\author{MMAE 450}
+\date{}
+
+\begin{document}
+
+% ============================================================
+% CONSISTENCY UPDATE (Projection Method Clarification)
+% ============================================================
+% Time discretization used throughout this deck:
+%
+%   (v^{n+1} - v^n)/dt = N(v^n) - (1/rho) grad p^{n+1}
+%
+% where:
+%   N(v^n) = - (v · grad)v + nu laplacian(v)   evaluated at time n.
+%
+% Predictor:
+%   v^* = v^n + dt * N(v^n)
+%
+% Corrector:
+%   v^{n+1} = v^* - (dt/rho) grad p^{n+1}
+%
+% All convective and diffusive fluxes are evaluated at time level n (explicit).
+% Pressure gradient is evaluated at time level n+1 (implicit).
+%
+% Finite Volume Poisson equation:
+%
+%   sum_f ( (dp/dn)_f l_f ) = (rho/dt) sum_f phi_f^*
+%
+% which on a Cartesian grid becomes:
+%
+%   laplacian(p) = (rho/dt) div(v^*)
+%
+% This matches the implementation in the companion notebook.
+% ============================================================
+
+
+% ----------------------------------------------------------------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%==================== Slide 1 ====================
+\begin{frame}{Incompressible Navier--Stokes (strong form)}
+\textbf{Unknowns:} velocity $\mathbf{v}(\mathbf{x},t)$ and pressure $p(\mathbf{x},t)$.
+
+\bigskip
+\textbf{Continuity (incompressibility):}
+\[
+\nabla\cdot\mathbf{v}=0
+\]
+
+\textbf{Momentum:}
+\[
+\rho\left(\frac{\partial \mathbf{v}}{\partial t}+(\mathbf{v}\cdot\nabla)\mathbf{v}\right)
+=
+-\nabla p+\mu\nabla^2\mathbf{v}
+\]
+\end{frame}
+%==================== Slide 2 ====================
+\begin{frame}{Rewrite convection in conservative (flux) form}
+For incompressible flow, $\nabla\cdot\mathbf{v}=0$, so
+\[
+(\mathbf{v}\cdot\nabla)\mathbf{v}
+=
+\nabla\cdot(\mathbf{v}\otimes\mathbf{v})
+\]
+(where $(\mathbf{v}\otimes\mathbf{v})_{ij}=v_i v_j$).
+
+\bigskip
+Then the momentum equation becomes
+\[
+\rho\frac{\partial \mathbf{v}}{\partial t}
++
+\nabla\cdot\big(\rho\,\mathbf{v}\otimes\mathbf{v}\big)
+=
+-\nabla p+\mu\nabla^2\mathbf{v}.
+\]
+\end{frame}
+
+%==================== Slide 3 ====================
+\begin{frame}{Put everything into $\nabla\cdot(\cdot)$ form}
+Use the identities
+\[
+-\nabla p = -\nabla\cdot(p\mathbf{I}),
+\qquad
+\mu\nabla^2\mathbf{v} = \nabla\cdot(\mu\nabla\mathbf{v})
+\quad (\mu=\text{const}).
+\]
+
+\bigskip
+So we can write
+\[
+\rho\frac{\partial \mathbf{v}}{\partial t}
++
+\nabla\cdot\Big(\rho\,\mathbf{v}\otimes\mathbf{v}
++ p\mathbf{I}
+-\mu\nabla\mathbf{v}\Big)
+=\mathbf{0}.
+\]
+\end{frame}
+%==================== Slide 4 ====================
+\begin{frame}{Flux form for finite volume}
+Define the \textbf{momentum flux tensor}
+\[
+\mathbf{F}
+\;\equiv\;
+\rho\,\mathbf{v}\otimes\mathbf{v}
++ p\mathbf{I}
+-\mu\nabla\mathbf{v}.
+\]
+
+\bigskip
+Then the momentum equation is
+\[
+\boxed{
+\rho \frac{\partial \mathbf{v}}{\partial t}
++\nabla\cdot\mathbf{F}
+=
+\mathbf{0}.
+}
+\]
+
+\bigskip
+\textbf{Interpretation:} \emph{storage} $+$ \emph{net outward flux} $=0$ (per unit volume).
+\end{frame}
+
+%==================== Slide 5 ====================
+\begin{frame}{Finite volume idea: integrate over a 2D control area}
+Consider a single 2D finite volume cell (per unit thickness) with area $A_P$
+and boundary $\partial A_P$.
+
+\bigskip
+Start from the flux form
+\[
+\rho \frac{\partial \mathbf{v}}{\partial t}+\nabla\cdot\mathbf{F}=\mathbf{0}.
+\]
+
+\bigskip
+Integrate over the control area $A_P$:
+\[
+\int_{A_P}\rho \frac{\partial \mathbf{v}}{\partial t}\,dA
++
+\int_{A_P}\nabla\cdot\mathbf{F}\,dA
+=
+\mathbf{0}.
+\]
+
+\bigskip
+\textbf{Goal:} convert the divergence term to a \emph{boundary flux} integral.
+\end{frame}
+%==================== Slide 6 ====================
+\begin{frame}{Divergence theorem in 2D (per unit thickness)}
+Apply the divergence theorem:
+\[
+\int_{A_P}\nabla\cdot\mathbf{F}\,dA
+=
+\int_{\partial A_P}\mathbf{F}\cdot\mathbf{n}\,ds,
+\]
+where $\mathbf{n}$ is the outward unit normal on $\partial A_P$ and $ds$ is
+arc length along the boundary.
+
+\bigskip
+So the finite-volume integral statement is
+\[
+\boxed{
+\int_{A_P}\rho \frac{\partial \mathbf{v}}{\partial t}\,dA
++
+\int_{\partial A_P}\mathbf{F}\cdot\mathbf{n}\,ds
+=
+\mathbf{0}.
+}
+\]
+
+\bigskip
+\textbf{Interpretation:} \emph{rate of change of momentum in the cell}
+$+$ \emph{net outward momentum flux through the cell boundary} $=0$.
+\end{frame}
+
+%==================== Slide 7 ====================
+\begin{frame}{From boundary integral to a sum over faces}
+Approximate the boundary integral by summing fluxes over the cell faces $f$:
+\[
+\int_{\partial A_P}\mathbf{F}\cdot\mathbf{n}\,ds
+\;\approx\;
+\sum_{f\in\partial P}\left(\mathbf{F}_f\cdot\mathbf{n}_f\right)\,\ell_f,
+\]
+where $\ell_f$ is the length of face $f$ (per unit thickness) and
+$\mathbf{n}_f$ is the outward unit normal on that face.
+
+\bigskip
+Also approximate the storage term using a cell-centered value $\mathbf{v}_P(t)$:
+\[
+\int_{A_P}\rho \frac{\partial \mathbf{v}}{\partial t}\,dA
+\;\approx\;
+\rho\,A_P\,\frac{d\mathbf{v}_P}{dt}.
+\]
+
+\bigskip
+\textbf{Finite-volume semi-discrete form:}
+\[
+\boxed{
+\rho\,A_P\,\frac{d\mathbf{v}_P}{dt}
++
+\sum_{f\in\partial P}\left(\mathbf{F}_f\cdot\mathbf{n}_f\right)\,\ell_f
+=
+\mathbf{0}.
+}
+\]
+\end{frame}
+
+%==================== Slide 8 ====================
+\begin{frame}{Decomposing the face flux $\mathbf{F}_f\cdot\mathbf{n}_f$}
+Recall the definition of the momentum flux tensor:
+\[
+\mathbf{F}
+=
+\rho\,\mathbf{v}\otimes\mathbf{v}
++
+p\mathbf{I}
+-
+\mu\nabla\mathbf{v}.
+\]
+
+\bigskip
+At a face $f$, the normal flux becomes
+\[
+\mathbf{F}_f\cdot\mathbf{n}_f
+=
+\underbrace{\rho\,\mathbf{v}_f(\mathbf{v}_f\cdot\mathbf{n}_f)}_{\text{convection}}
++
+\underbrace{p_f\,\mathbf{n}_f}_{\text{pressure}}
+-
+\underbrace{\mu\,(\nabla\mathbf{v})_f\cdot\mathbf{n}_f}_{\text{diffusion}}.
+\]
+
+\bigskip
+\textbf{So each face contributes:}
+\[
+(\text{convective flux})
++
+(\text{pressure force})
++
+(\text{viscous traction}).
+\]
+
+\bigskip
+All physics enters \emph{through faces}.
+\end{frame}
+
+%==================== Slide 9 ====================
+\begin{frame}{Introducing the normal flux $\phi_f$}
+Define the \textbf{normal volumetric flux} through face $f$:
+\[
+\phi_f
+\;\equiv\;
+(\mathbf{v}_f \cdot \mathbf{n}_f)\,\ell_f.
+\]
+
+\bigskip
+Then the convective momentum flux becomes
+\[
+\rho\,\mathbf{v}_f(\mathbf{v}_f\cdot\mathbf{n}_f)\,\ell_f
+=
+\rho\,\mathbf{v}_f\,\phi_f.
+\]
+
+\bigskip
+So the semi-discrete FV equation can be written as
+\[
+\rho A_P \frac{d\mathbf{v}_P}{dt}
++
+\sum_{f\in\partial P}
+\Big(
+\rho\,\mathbf{v}_f\,\phi_f
++
+p_f\,\mathbf{n}_f\,\ell_f
+-
+\mu\,(\nabla\mathbf{v})_f\cdot\mathbf{n}_f\,\ell_f
+\Big)
+=
+\mathbf{0}.
+\]
+
+\bigskip
+\textbf{Key idea:} incompressibility will require
+\[
+\sum_{f\in\partial P} \phi_f = 0.
+\]
+\end{frame}
+
+%==================== Slide 10 ====================
+\begin{frame}{Key idea: incompressibility in finite-volume form}
+For an incompressible fluid,
+\[
+\nabla \cdot \mathbf{v} = 0.
+\]
+
+\bigskip
+Integrate over a control area $A_P$:
+\[
+\int_{A_P} \nabla \cdot \mathbf{v}\, dA = 0.
+\]
+
+\bigskip
+Apply the divergence theorem:
+\[
+\int_{\partial A_P} \mathbf{v}\cdot \mathbf{n}\, ds = 0.
+\]
+
+\bigskip
+Discrete (finite-volume) form:
+\[
+\boxed{
+\sum_{f\in\partial P} \phi_f = 0.
+}
+\]
+
+\end{frame}
+
+\begin{frame}
+\bigskip
+\textbf{Interpretation:}
+
+\begin{itemize}
+\item No net volumetric flux leaves or enters the cell.
+\item Fluid cannot accumulate or disappear inside $A_P$.
+\item Pressure will be computed to enforce this constraint.
+\end{itemize}
+\end{frame}
+
+%==================== Slide 11 ====================
+\begin{frame}{Time discretization: predictor step}
+Starting from the semi-discrete FV form
+\[
+\rho A_P \frac{d\mathbf{v}_P}{dt}
++
+\sum_{f\in\partial P}
+\Big(
+\rho\,\mathbf{v}_f\,\phi_f
++
+p_f\,\mathbf{n}_f\,\ell_f
+-
+\mu\,(\nabla\mathbf{v})_f\cdot\mathbf{n}_f\,\ell_f
+\Big)
+=
+\mathbf{0},
+\]
+
+\bigskip
+we advance in time using a simple forward Euler scheme.
+
+\bigskip
+\textbf{Predictor: ignore pressure for the moment}
+\[
+\rho A_P
+\frac{\mathbf{v}_P^{*}-\mathbf{v}_P^{n}}{\Delta t}
++
+\sum_{f\in\partial P}
+\Big(
+\rho\,\mathbf{v}_f^{n}\,\phi_f^{n}
+-
+\mu\,(\nabla\mathbf{v})_f^{n}\cdot\mathbf{n}_f\,\ell_f
+\Big)
+=
+\mathbf{0}.
+\]
+
+\bigskip
+This produces a provisional velocity $\mathbf{v}^{*}$ that generally
+\emph{does not satisfy}
+\[
+\sum_{f\in\partial P} \phi_f^{*} = 0.
+\]
+\end{frame}
+
+%==================== Slide 12 ====================
+\begin{frame}{Implementation details: computing face quantities}
+To evaluate the predictor step, we must approximate face values.
+
+\bigskip
+\textbf{1. Face velocity $\mathbf{v}_f$} ($\mathbf{v}_N$ is the velocity vector a the center of the neighboring cell).
+
+\[
+\mathbf{v}_f \approx \dfrac{\mathbf{v}_P + \mathbf{v}_N}{2} & \text{(central)}
+\]
+\textbf{2. Normal volumetric flux}
+
+\[
+\phi_f
+=
+(\mathbf{v}_f \cdot \mathbf{n}_f)\,\ell_f
+\]
+
+\bigskip
+\textbf{3. Diffusive term}
+
+\[
+(\nabla \mathbf{v})_f \cdot \mathbf{n}_f
+\approx
+\frac{\mathbf{v}_N - \mathbf{v}_P}{d_{PN}}
+\]
+
+where $d_{PN}$ is the distance between neighboring cell centers.
+
+\end{frame}
+%==================== Slide 13 =======================
+\begin{frame}{Diffusion term: normal gradient at a face}
+\centering
+\renewcommand{\FigWidth}{0.85\textwidth}
+\input{../figures/lectures/orthogonal_grid.tikz}
+\end{frame}
+%======================================================
+\begin{frame}
+\bigskip
+\textbf{Geometric interpretation:}
+
+\[
+(\nabla \mathbf{v})_f \cdot \mathbf{n}_f
+=
+\frac{\partial \mathbf{v}}{\partial n}
+\Big|_f
+\]
+
+On an orthogonal grid, the face normal direction aligns with the
+center-to-center direction, so
+
+\[
+\frac{\partial \mathbf{v}}{\partial n}
+\Big|_f
+\approx
+\frac{\mathbf{v}_N - \mathbf{v}_P}{d_{PN}}.
+\]
+
+\smallskip
+\emph{This is a directional derivative in the normal direction.}
+\end{frame}
+
+
+
+
+%==================== Slide 13 ====================
+\begin{frame}{Assembling the face contributions (one cell)}
+For a Cartesian cell $P=(i,j)$, the semi-discrete predictor equation is
+
+\[
+\rho A_P \frac{\mathbf{v}_P^{*}-\mathbf{v}_P^{n}}{\Delta t}
++
+\sum_{f\in\{E,W,N,S\}}
+\Big(
+\rho\,\mathbf{v}_f\,\phi_f
+-
+\mu\,(\nabla\mathbf{v})_f\cdot\mathbf{n}_f\,\ell_f
+\Big)
+=
+\mathbf{0}.
+\]
+
+\bigskip
+Write the sum explicitly:
+
+\[
+(\text{E}) + (\text{W}) + (\text{N}) + (\text{S}).
+\]
+
+Each face contributes:
+
+\[
+\text{Face } f:
+\quad
+\rho\,\mathbf{v}_f\,\phi_f
+-
+\mu
+\frac{\mathbf{v}_N-\mathbf{v}_P}{d_{PN}}
+\,\ell_f.
+\]
+
+\bigskip
+The update for $\mathbf{v}_P$ is simply
+\[
+\text{storage} + \text{E} + \text{W} + \text{N} + \text{S} = 0.
+\]
+\end{frame}
+
+%==================== Slide 14 ====================
+%==================== Slide 14 ====================
+\begin{frame}{Diffusion term: East and West faces}
+
+Consider only the diffusive contributions
+\[
+\sum_{f\in\{E,W,N,S\}}
+-
+\mu\,(\nabla\mathbf{v})_f\cdot\mathbf{n}_f\,\ell_f.
+\]
+
+\bigskip
+\textbf{East face}
+\[
+(\nabla\mathbf{v})_E\cdot\mathbf{n}_E
+\approx
+\frac{\mathbf{v}_{i+1,j}-\mathbf{v}_{i,j}}{\Delta x},
+\qquad
+\ell_E=\Delta y
+\]
+
+\textbf{West face}
+\[
+(\nabla\mathbf{v})_W\cdot\mathbf{n}_W
+\approx
+\frac{\mathbf{v}_{i,j}-\mathbf{v}_{i-1,j}}{\Delta x},
+\qquad
+\ell_W=\Delta y
+\]
+
+\bigskip
+So E+W contribution is
+
+\[
+-\mu \Delta y
+\left(
+\frac{\mathbf{v}_{i+1,j}-\mathbf{v}_{i,j}}{\Delta x}
+-
+\frac{\mathbf{v}_{i,j}-\mathbf{v}_{i-1,j}}{\Delta x}
+\right).
+\]
+
+\end{frame}
+%==================== Slide 15 ====================
+\begin{frame}{Diffusion term: Simplifying and adding N/S}
+
+Simplify East + West:
+
+\[
+-\mu \Delta y
+\frac{\mathbf{v}_{i+1,j}-2\mathbf{v}_{i,j}+\mathbf{v}_{i-1,j}}{\Delta x}.
+\]
+
+\bigskip
+\textbf{North and South faces}
+
+\[
+(\nabla\mathbf{v})_N\cdot\mathbf{n}_N
+\approx
+\frac{\mathbf{v}_{i,j+1}-\mathbf{v}_{i,j}}{\Delta y},
+\qquad
+\ell_N=\Delta x
+\]
+
+\[
+(\nabla\mathbf{v})_S\cdot\mathbf{n}_S
+\approx
+\frac{\mathbf{v}_{i,j}-\mathbf{v}_{i,j-1}}{\Delta y},
+\qquad
+\ell_S=\Delta x
+\]
+
+\bigskip
+So N+S gives
+
+\[
+-\mu \Delta x
+\frac{\mathbf{v}_{i,j+1}-2\mathbf{v}_{i,j}+\mathbf{v}_{i,j-1}}{\Delta y}.
+\]
+
+\end{frame}
+
+%==================== Slide 16 ====================
+\begin{frame}{Full 2D diffusion term: Laplacian emerges}
+
+Combine all four faces:
+
+\[
+\sum_f \text{diffusion}
+=
+-\mu \left[
+\Delta y
+\frac{\mathbf{v}_{i+1,j}-2\mathbf{v}_{i,j}+\mathbf{v}_{i-1,j}}{\Delta x}
++
+\Delta x
+\frac{\mathbf{v}_{i,j+1}-2\mathbf{v}_{i,j}+\mathbf{v}_{i,j-1}}{\Delta y}
+\right].
+\]
+
+\bigskip
+Divide by cell area $A_P=\Delta x\Delta y$:
+
+\[
+\boxed{
+\mu
+\left(
+\frac{\mathbf{v}_{i+1,j}-2\mathbf{v}_{i,j}+\mathbf{v}_{i-1,j}}{\Delta x^2}
++
+\frac{\mathbf{v}_{i,j+1}-2\mathbf{v}_{i,j}+\mathbf{v}_{i,j-1}}{\Delta y^2}
+\right)
+}
+\]
+
+\bigskip
+\centering
+\textbf{The discrete Laplacian appears naturally from face fluxes.}
+
+\end{frame}
+%==================== Slide 17 ====================
+\begin{frame}{Predictor step: full momentum update (no pressure)}
+
+We now assemble the predictor equation
+(with pressure temporarily omitted):
+
+\[
+\rho A_P \frac{\mathbf{v}_P^{*}-\mathbf{v}_P^{n}}{\Delta t}
+=
+-\sum_{f}
+\rho\,\mathbf{v}_f\,\phi_f
++
+\mu \nabla_h^2 \mathbf{v}_P.
+\]
+
+\bigskip
+On a Cartesian grid:
+
+\[
+\nabla_h^2 \mathbf{v}_P
+=
+\frac{\mathbf{v}_{i+1,j}-2\mathbf{v}_{i,j}+\mathbf{v}_{i-1,j}}{\Delta x^2}
++
+\frac{\mathbf{v}_{i,j+1}-2\mathbf{v}_{i,j}+\mathbf{v}_{i,j-1}}{\Delta y^2}.
+\]
+
+\bigskip
+This produces a provisional velocity
+\[
+\mathbf{v}^*
+\]
+that generally does \emph{not} satisfy
+\[
+\sum_f \phi_f^* = 0.
+\]
+
+\end{frame}
+
+\begin{frame}
+All face quantities are evaluated using $\mathbf{v}^n$:
+\[
+\mathbf{v}_f = \mathbf{v}_f^n,
+\qquad
+\phi_f = (\mathbf{v}_f^n\cdot\mathbf{n}_f)\,\ell_f.
+\]
+
+\end{frame}
+
+
+%==================== Slide 18 ====================
+
+%==================== Slide 20 ====================
+\begin{frame}{Pressure correction: from $\mathbf{v}^*$ to $\mathbf{v}^{n+1}$}
+\bigskip
+Assume we have computed the provisional velocity $\mathbf{v}^*$ from the predictor step.
+In general, $\mathbf{v}^*$ is not divergence-free.
+
+
+We define the corrected velocity by
+\[
+\boxed{
+\mathbf{v}^{n+1}
+=
+\mathbf{v}^*
+-
+\frac{\Delta t}{\rho}\nabla p^{n+1}.
+}
+\]
+
+\bigskip
+Take the divergence of both sides:
+\[
+\nabla\cdot\mathbf{v}^{n+1}
+=
+\nabla\cdot\mathbf{v}^*
+-
+\frac{\Delta t}{\rho}\nabla\cdot(\nabla p^{n+1}).
+\]
+
+\bigskip
+Impose incompressibility at the new time level:
+\[
+\nabla\cdot\mathbf{v}^{n+1}=0.
+\]
+\end{frame}
+
+
+%==================== Slide 21 ====================
+\begin{frame}{Pressure Poisson equation}
+
+From incompressibility we obtain
+
+\[
+\boxed{
+\nabla^2 p^{n+1}
+=
+\frac{\rho}{\Delta t}\,\nabla\cdot\mathbf{v}^*.
+}
+\]
+
+\bigskip
+\textbf{Important:}
+
+\begin{itemize}
+\item This is a \emph{Poisson equation} for $p^{n+1}$.
+\item The right-hand side is completely known.
+\item It is computed from the provisional velocity $\mathbf{v}^*$.
+\item The equation is linear in $p^{n+1}$.
+\end{itemize}
+
+\bigskip
+After solving for $p^{n+1}$, we update
+
+\[
+\mathbf{v}^{n+1}
+=
+\mathbf{v}^*
+-
+\frac{\Delta t}{\rho}\nabla p^{n+1}.
+\]
+
+\end{frame}
+
+
+%==============================================================
+
+%==================== Final Slide 1 ====================
+\begin{frame}{Algorithm Summary: Projection Method (FV)}
+
+At each time step:
+
+\bigskip
+\textbf{1. Predictor (momentum without pressure)}
+\[
+\mathbf{v}^* = 
+\mathbf{v}^n
++ \Delta t \; \mathcal{N}(\mathbf{v}^n)
++ \Delta t \; \mathcal{D}(\mathbf{v}^n)
+\]
+
+\bigskip
+\textbf{2. Solve pressure Poisson equation}
+\[
+\nabla^2 p^{n+1}
+=
+\frac{\rho}{\Delta t}\nabla\cdot\mathbf{v}^*
+\]
+
+\bigskip
+\textbf{3. Correct velocity}
+\[
+\mathbf{v}^{n+1}
+=
+\mathbf{v}^*
+-
+\frac{\Delta t}{\rho}\nabla p^{n+1}
+\]
+
+\bigskip
+\textbf{4. Enforce boundary conditions}
+
+\end{frame}
+
+
+%==================== Final Slide 2 ====================
+\begin{frame}{What did we just do?}
+
+\begin{itemize}
+\item Converted Navier–Stokes into conservative flux form.
+\item Applied the finite-volume method.
+\item Approximated face fluxes on an orthogonal grid.
+\item Derived the discrete Laplacian naturally.
+\item Enforced incompressibility via a Poisson solve.
+\end{itemize}
+
+\bigskip
+\centering
+\Large
+Pressure enforces mass conservation.
+\end{frame}
+
+
+%==================== Final Slide 3 ====================
+\begin{frame}{Next: Applications}
+
+\begin{itemize}
+\item Lid-driven cavity (Python implementation)
+\item Flow around a cylinder (OpenFOAM)
+\item Grid effects and stability
+\item Linear solvers for Poisson equation
+\end{itemize}
+
+\bigskip
+\centering
+\Large
+The mathematics is complete.  
+Now we compute.
+\end{frame}
+
+%==========================================================
+
+
+
+
+
+
+
+
+
+
+\end{document}

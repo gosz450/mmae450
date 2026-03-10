@@ -1,0 +1,210 @@
+.
+├── homework
+│   ├── hw01
+│   │   └── hw01.pdf
+│   ├── hw02
+│   │   ├── hw02_rubric.md
+│   │   └── hw02.pdf
+│   ├── hw03
+│   │   ├── 1D_heat_FTSC_solution.ipynb
+│   │   ├── hw03.pdf
+│   │   └── HW3_1D_heat_FTSC_template.ipynb
+│   └── hw04
+│       └── hw04.pdf
+├── modules
+│   ├── module00_setup
+│   │   ├── notebooks
+│   │   ├── README.md
+│   │   └── slides
+│   │       ├── Getting Started with Google Colab.pdf
+│   │       ├── Python installation on macOS and Windows.pdf
+│   │       ├── python_installation_mac.pdf
+│   │       └── python_installation_windows.pdf
+│   ├── module01_foundations
+│   │   ├── notebooks
+│   │   │   ├── python_workflow.ipynb
+│   │   │   └── taylor_1D.ipynb
+│   │   ├── README.md
+│   │   └── slides
+│   │       ├── lecture01.pdf
+│   │       └── lecture02.pdf
+│   ├── module02_newtons_method_nonlinear_systems
+│   │   ├── notebooks
+│   │   │   ├── newton_1D.ipynb
+│   │   │   └── newton2D.ipynb
+│   │   ├── README.md
+│   │   └── slides
+│   │       ├── lecture03.pdf
+│   │       └── lecture04.pdf
+│   ├── module03_1D_heat_conduction
+│   │   ├── notebooks
+│   │   │   ├── 1D_heat_FTSC.ipynb
+│   │   │   └── stability_von_neumann.ipynb
+│   │   ├── README.md
+│   │   └── slides
+│   │       ├── lecture05.pdf
+│   │       ├── lecture06.pdf
+│   │       ├── lecture07.pdf
+│   │       └── lecture08.pdf
+│   ├── module04_2D_heat_conduction_wave_propagation
+│   │   ├── notebooks
+│   │   │   ├── 1D_stress_wave.ipynb
+│   │   │   ├── 2d_plate_dirichlet_numpy_solver.ipynb
+│   │   │   ├── 2D_steady_heat_conduction_gauss_seidel.ipynb
+│   │   │   └── steady_2D_heat_square_plate.ipynb
+│   │   ├── README.md
+│   │   └── slides
+│   │       ├── lecture09.pdf
+│   │       ├── lecture10.pdf
+│   │       ├── lecture11.pdf
+│   │       └── lecture12.pdf
+│   └── module05_advection_diffusion
+│       └── notebooks
+│           └── 1D_advection_diffusion_thomas.ipynb
+├── README.md
+├── syllabus
+│   └── syllabus.pdf
+├── tex
+│   ├── build
+│   │   ├── lecture01_course_introduction.aux
+│   │   ├── lecture01_course_introduction.log
+│   │   ├── lecture01_course_introduction.nav
+│   │   ├── lecture01_course_introduction.out
+│   │   ├── lecture01_course_introduction.pdf
+│   │   ├── lecture01_course_introduction.snm
+│   │   ├── lecture01_course_introduction.toc
+│   │   ├── lecture02_taylor_series_1D.aux
+│   │   ├── lecture02_taylor_series_1D.log
+│   │   ├── lecture02_taylor_series_1D.nav
+│   │   ├── lecture02_taylor_series_1D.out
+│   │   ├── lecture02_taylor_series_1D.pdf
+│   │   ├── lecture02_taylor_series_1D.snm
+│   │   ├── lecture02_taylor_series_1D.toc
+│   │   ├── lecture03_nonlinear_systems_2D.aux
+│   │   ├── lecture03_nonlinear_systems_2D.log
+│   │   ├── lecture03_nonlinear_systems_2D.nav
+│   │   ├── lecture03_nonlinear_systems_2D.out
+│   │   ├── lecture03_nonlinear_systems_2D.pdf
+│   │   ├── lecture03_nonlinear_systems_2D.snm
+│   │   ├── lecture03_nonlinear_systems_2D.toc
+│   │   ├── lecture04_newtons_method_nonlinear_sytems.aux
+│   │   ├── lecture04_newtons_method_nonlinear_sytems.log
+│   │   ├── lecture04_newtons_method_nonlinear_sytems.nav
+│   │   ├── lecture04_newtons_method_nonlinear_sytems.out
+│   │   ├── lecture04_newtons_method_nonlinear_sytems.pdf
+│   │   ├── lecture04_newtons_method_nonlinear_sytems.snm
+│   │   ├── lecture04_newtons_method_nonlinear_sytems.toc
+│   │   ├── lecture05_divergence_theorem.aux
+│   │   ├── lecture05_divergence_theorem.log
+│   │   ├── lecture05_divergence_theorem.nav
+│   │   ├── lecture05_divergence_theorem.out
+│   │   ├── lecture05_divergence_theorem.pdf
+│   │   ├── lecture05_divergence_theorem.snm
+│   │   ├── lecture05_divergence_theorem.toc
+│   │   ├── lecture06_1D_heat_conduction_ftcs.aux
+│   │   ├── lecture06_1D_heat_conduction_ftcs.log
+│   │   ├── lecture06_1D_heat_conduction_ftcs.nav
+│   │   ├── lecture06_1D_heat_conduction_ftcs.out
+│   │   ├── lecture06_1D_heat_conduction_ftcs.pdf
+│   │   ├── lecture06_1D_heat_conduction_ftcs.snm
+│   │   ├── lecture06_1D_heat_conduction_ftcs.toc
+│   │   ├── lecture07_1D_heat_conduction_ftcs_bcs.aux
+│   │   ├── lecture07_1D_heat_conduction_ftcs_bcs.log
+│   │   ├── lecture07_1D_heat_conduction_ftcs_bcs.nav
+│   │   ├── lecture07_1D_heat_conduction_ftcs_bcs.out
+│   │   ├── lecture07_1D_heat_conduction_ftcs_bcs.pdf
+│   │   ├── lecture07_1D_heat_conduction_ftcs_bcs.snm
+│   │   ├── lecture07_1D_heat_conduction_ftcs_bcs.toc
+│   │   ├── lecture08_1D_heat_conduction_cn.aux
+│   │   ├── lecture08_1D_heat_conduction_cn.log
+│   │   ├── lecture08_1D_heat_conduction_cn.nav
+│   │   ├── lecture08_1D_heat_conduction_cn.out
+│   │   ├── lecture08_1D_heat_conduction_cn.pdf
+│   │   ├── lecture08_1D_heat_conduction_cn.snm
+│   │   ├── lecture08_1D_heat_conduction_cn.toc
+│   │   ├── lecture09_2D_heat_conduction.aux
+│   │   ├── lecture09_2D_heat_conduction.log
+│   │   ├── lecture09_2D_heat_conduction.nav
+│   │   ├── lecture09_2D_heat_conduction.out
+│   │   ├── lecture09_2D_heat_conduction.pdf
+│   │   ├── lecture09_2D_heat_conduction.snm
+│   │   ├── lecture09_2D_heat_conduction.toc
+│   │   ├── lecture10_2D_indexing.aux
+│   │   ├── lecture10_2D_indexing.log
+│   │   ├── lecture10_2D_indexing.nav
+│   │   ├── lecture10_2D_indexing.out
+│   │   ├── lecture10_2D_indexing.pdf
+│   │   ├── lecture10_2D_indexing.snm
+│   │   ├── lecture10_2D_indexing.toc
+│   │   ├── lecture11_stability_von_neumann.aux
+│   │   ├── lecture11_stability_von_neumann.log
+│   │   ├── lecture11_stability_von_neumann.nav
+│   │   ├── lecture11_stability_von_neumann.out
+│   │   ├── lecture11_stability_von_neumann.pdf
+│   │   ├── lecture11_stability_von_neumann.snm
+│   │   ├── lecture11_stability_von_neumann.toc
+│   │   ├── lecture12_wave_equation_1D.aux
+│   │   ├── lecture12_wave_equation_1D.log
+│   │   ├── lecture12_wave_equation_1D.nav
+│   │   ├── lecture12_wave_equation_1D.out
+│   │   ├── lecture12_wave_equation_1D.pdf
+│   │   ├── lecture12_wave_equation_1D.snm
+│   │   └── lecture12_wave_equation_1D.toc
+│   ├── figures
+│   │   └── lectures
+│   │       ├── canvas.png
+│   │       ├── chap01_fig03_newton_method.png
+│   │       ├── chap01_fig04_three_surfaces.png
+│   │       ├── chap03_fig10_rect-stencil.png
+│   │       ├── chap03_fig11_temp_field.png
+│   │       ├── complex_mesh.png
+│   │       ├── flow_cylinder.png
+│   │       ├── heat_potato.png
+│   │       ├── notebook.png
+│   │       ├── taylor_x0_centered.png
+│   │       └── taylor_x0_minus1.png
+│   ├── homework
+│   │   ├── hw01.tex
+│   │   ├── hw02.tex
+│   │   ├── hw03.aux
+│   │   ├── hw03.log
+│   │   ├── hw03.out
+│   │   ├── hw03.pdf
+│   │   ├── hw03.synctex.gz
+│   │   ├── hw03.tex
+│   │   ├── hw04_2D_transient_heat_plate.aux
+│   │   ├── hw04_2D_transient_heat_plate.log
+│   │   ├── hw04_2D_transient_heat_plate.out
+│   │   ├── hw04_2D_transient_heat_plate.synctex.gz
+│   │   ├── hw04.pdf
+│   │   └── hw04.tex
+│   ├── lectures
+│   │   ├── lecture01_course_introduction.tex
+│   │   ├── lecture02_taylor_series_1D.tex
+│   │   ├── lecture03_nonlinear_systems_2D.tex
+│   │   ├── lecture04_newtons_method_nonlinear_sytems.tex
+│   │   ├── lecture05_divergence_theorem.tex
+│   │   ├── lecture06_1D_heat_conduction_ftcs.tex
+│   │   ├── lecture07_1D_heat_conduction_ftcs_bcs.tex
+│   │   ├── lecture08_1D_heat_conduction_cn.tex
+│   │   ├── lecture09_2D_heat_conduction.tex
+│   │   ├── lecture10_2D_indexing.tex
+│   │   ├── lecture11_stability_von_neumann.tex
+│   │   └── lecture12_wave_equation_1D.tex
+│   ├── Makefile
+│   ├── preamble
+│   │   └── beamer_styles.tex
+│   └── syllabus
+│       ├── syllabus.aux
+│       ├── syllabus.log
+│       ├── syllabus.out
+│       ├── syllabus.pdf
+│       ├── syllabus.synctex.gz
+│       └── syllabus.tex
+├── tools
+│   └── environment
+│       ├── create_env.md
+│       └── requirements.txt
+└── tree.txt
+
+35 directories, 173 files
